@@ -1,8 +1,10 @@
 @import "tailwindcss";
+@import "../styles/winamp.css";
+@import "../styles/light-theme.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0f0f1a;
+  --foreground: #00ff00;
 }
 
 @theme inline {
@@ -12,15 +14,51 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent text selection during drag */
+.select-none {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Custom cursor for dragging */
+.cursor-grabbing * {
+  cursor: grabbing !important;
+}
+
+/* Focus outlines for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #00ff00;
+  outline-offset: 2px;
+}
+
+/* Hide YouTube iframe */
+iframe[src*="youtube.com"] {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }

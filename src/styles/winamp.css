@@ -1,0 +1,266 @@
+/* YouAmp - Winamp-inspired styles */
+
+/* ===== WINAMP WINDOW ===== */
+.winamp-window {
+  @apply rounded-sm overflow-hidden;
+  background: linear-gradient(180deg, #2a2a40 0%, #1a1a2e 100%);
+  border: 1px solid #3a3a5a;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.winamp-titlebar {
+  @apply px-2 py-1;
+  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
+  border-bottom: 1px solid #1a1a2e;
+}
+
+.winamp-title {
+  @apply text-xs font-bold;
+  color: #00ff00;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.winamp-content {
+  @apply p-2;
+}
+
+/* ===== WINAMP BUTTONS ===== */
+.winamp-button {
+  @apply flex items-center justify-center rounded-sm;
+  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
+  border: 1px solid #4a4a6a;
+  color: #00ff00;
+  transition: all 0.1s ease;
+}
+
+.winamp-button:hover {
+  background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+.winamp-button:active {
+  background: linear-gradient(180deg, #2a2a40 0%, #3a3a5a 100%);
+}
+
+.winamp-button.winamp-close:hover {
+  background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
+  color: white;
+}
+
+.winamp-button-small {
+  @apply text-[10px] px-1 py-0.5;
+}
+
+.winamp-button-icon {
+  @apply w-6 h-6;
+}
+
+.winamp-button-active {
+  background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%);
+  color: #000;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* ===== TRANSPORT CONTROLS ===== */
+.transport-button {
+  @apply w-7 h-6 flex items-center justify-center rounded-sm;
+  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
+  border: 1px solid #4a4a6a;
+  color: #00ff00;
+  transition: all 0.1s ease;
+}
+
+.transport-button:hover:not(:disabled) {
+  background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.transport-button:active:not(:disabled) {
+  background: linear-gradient(180deg, #2a2a40 0%, #3a3a5a 100%);
+}
+
+.transport-button.active {
+  background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%);
+  color: #000;
+}
+
+.transport-button:disabled {
+  @apply opacity-40 cursor-not-allowed;
+}
+
+/* ===== SLIDER ===== */
+.winamp-slider {
+  @apply relative cursor-pointer;
+}
+
+.winamp-slider-horizontal {
+  @apply h-3;
+}
+
+.winamp-slider-vertical {
+  @apply w-3;
+}
+
+.winamp-slider-track {
+  @apply absolute rounded-full;
+  background: linear-gradient(180deg, #1a1a2e 0%, #2a2a40 100%);
+  border: 1px solid #3a3a5a;
+}
+
+.winamp-slider-horizontal .winamp-slider-track {
+  @apply w-full h-2 top-1/2 -translate-y-1/2;
+}
+
+.winamp-slider-vertical .winamp-slider-track {
+  @apply h-full w-2 left-1/2 -translate-x-1/2;
+}
+
+.winamp-slider-fill {
+  @apply absolute rounded-full;
+  background: linear-gradient(90deg, #00aa00 0%, #00ff00 100%);
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.winamp-slider-horizontal .winamp-slider-fill {
+  @apply h-full left-0 top-0;
+}
+
+.winamp-slider-vertical .winamp-slider-fill {
+  @apply w-full left-0;
+}
+
+.winamp-slider-thumb {
+  @apply absolute w-3 h-3 rounded-full z-10;
+  background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%);
+  border: 1px solid #00ff00;
+  box-shadow:
+    0 0 8px rgba(0, 255, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.winamp-slider-horizontal .winamp-slider-thumb {
+  @apply top-1/2 -translate-y-1/2;
+}
+
+/* ===== LED DISPLAY ===== */
+.led-display {
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* ===== VISUALIZATION ===== */
+.visualization {
+  background: #000;
+  border: 1px solid #1a1a2e;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+.visualization-bar {
+  min-width: 3px;
+  border-radius: 1px 1px 0 0;
+}
+
+/* ===== MODE BUTTONS ===== */
+.mode-button {
+  @apply w-7 h-5 flex items-center justify-center rounded-sm;
+  background: linear-gradient(180deg, #2a2a40 0%, #1a1a2e 100%);
+  border: 1px solid #3a3a5a;
+  color: #666;
+  transition: all 0.15s ease;
+}
+
+.mode-button:hover {
+  color: #00ff00;
+  border-color: #00ff00;
+}
+
+.mode-button-active {
+  color: #00ff00;
+  background: linear-gradient(180deg, #1a3a1a 0%, #0a2a0a 100%);
+  border-color: #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+/* ===== VOLUME ICON ===== */
+.volume-icon {
+  @apply w-5 h-5 flex items-center justify-center;
+  color: #00ff00;
+  transition: all 0.1s ease;
+}
+
+.volume-icon:hover {
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+/* ===== MENU BAR ===== */
+.menu-button {
+  @apply px-2 py-0.5 text-xs rounded;
+  color: #888;
+  transition: all 0.1s ease;
+}
+
+.menu-button:hover {
+  color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.menu-button-active {
+  color: #00ff00;
+  background: rgba(0, 255, 0, 0.15);
+}
+
+/* ===== PLAYLIST ===== */
+.playlist-control-btn {
+  @apply px-2 py-0.5 text-xs rounded;
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+  transition: all 0.1s ease;
+}
+
+.playlist-control-btn:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+.playlist-control-btn:disabled {
+  @apply opacity-40 cursor-not-allowed;
+}
+
+/* ===== SCROLLBAR ===== */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #1a1a2e;
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
+  border-radius: 4px;
+  border: 1px solid #4a4a6a;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
+}
+
+/* ===== SCANLINES EFFECT ===== */
+.bg-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+/* ===== GRADIENT RADIAL ===== */
+.bg-gradient-radial {
+  background: radial-gradient(ellipse at center, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 70%);
+}

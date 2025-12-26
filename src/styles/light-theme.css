@@ -1,0 +1,188 @@
+/* Light theme overrides */
+
+.light-theme {
+  /* Main backgrounds */
+  --bg-primary: #e8e8f0;
+  --bg-secondary: #d8d8e0;
+  --bg-window: linear-gradient(180deg, #e0e0e8 0%, #d0d0d8 100%);
+  --border-color: #b0b0c0;
+  --text-primary: #00aa00;
+  --text-secondary: #008800;
+}
+
+.light-theme .winamp-window {
+  background: linear-gradient(180deg, #e0e0e8 0%, #c8c8d0 100%);
+  border-color: #a0a0b0;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .winamp-titlebar {
+  background: linear-gradient(180deg, #d0d0d8 0%, #c0c0c8 100%);
+  border-bottom-color: #b0b0b8;
+}
+
+.light-theme .winamp-title {
+  color: #008800;
+  text-shadow: 0 0 10px rgba(0, 136, 0, 0.3);
+}
+
+.light-theme .winamp-button {
+  background: linear-gradient(180deg, #e8e8f0 0%, #d0d0d8 100%);
+  border-color: #a0a0b0;
+  color: #008800;
+}
+
+.light-theme .winamp-button:hover {
+  background: linear-gradient(180deg, #f0f0f8 0%, #e0e0e8 100%);
+}
+
+.light-theme .transport-button {
+  background: linear-gradient(180deg, #e0e0e8 0%, #c8c8d0 100%);
+  border-color: #a0a0b0;
+  color: #008800;
+}
+
+.light-theme .transport-button:hover:not(:disabled) {
+  background: linear-gradient(180deg, #e8e8f0 0%, #d8d8e0 100%);
+}
+
+.light-theme .transport-button.active {
+  background: linear-gradient(180deg, #00cc00 0%, #00aa00 100%);
+  color: #fff;
+}
+
+.light-theme .mode-button {
+  background: linear-gradient(180deg, #d8d8e0 0%, #c0c0c8 100%);
+  border-color: #a0a0b0;
+  color: #888;
+}
+
+.light-theme .mode-button-active {
+  background: linear-gradient(180deg, #c0e8c0 0%, #a0d0a0 100%);
+  border-color: #00aa00;
+  color: #008800;
+}
+
+.light-theme .winamp-slider-track {
+  background: linear-gradient(180deg, #c0c0c8 0%, #d0d0d8 100%);
+  border-color: #a0a0b0;
+}
+
+.light-theme .winamp-slider-fill {
+  background: linear-gradient(90deg, #00aa00 0%, #00cc00 100%);
+}
+
+.light-theme .winamp-slider-thumb {
+  background: linear-gradient(180deg, #00cc00 0%, #00aa00 100%);
+  border-color: #008800;
+}
+
+.light-theme .visualization {
+  background: #f0f0f0;
+  border-color: #c0c0c8;
+}
+
+.light-theme .visualization-bar {
+  background: linear-gradient(to top, #00aa00 0%, #88cc00 50%, #ff8800 100%) !important;
+}
+
+.light-theme .led-display {
+  color: #008800 !important;
+}
+
+.light-theme .menu-bar {
+  background: rgba(224, 224, 232, 0.95) !important;
+  border-bottom-color: rgba(0, 136, 0, 0.2) !important;
+}
+
+.light-theme .menu-button {
+  color: #666;
+}
+
+.light-theme .menu-button:hover,
+.light-theme .menu-button-active {
+  color: #008800;
+  background: rgba(0, 136, 0, 0.1);
+}
+
+.light-theme .desktop {
+  background: linear-gradient(180deg, #d0d0e0 0%, #c0c0d0 100%);
+}
+
+.light-theme .bg-gradient-radial {
+  background: radial-gradient(ellipse at center, #e0e0f0 0%, #c0c0d0 70%);
+}
+
+.light-theme .scrollbar-thin::-webkit-scrollbar-track {
+  background: #d0d0d8;
+}
+
+.light-theme .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #b0b0b8 0%, #a0a0a8 100%);
+  border-color: #909098;
+}
+
+.light-theme .text-\[\#00ff00\] {
+  color: #008800 !important;
+}
+
+.light-theme .text-\[\#00aa00\] {
+  color: #006600 !important;
+}
+
+.light-theme .bg-\[\#00ff00\]\/10,
+.light-theme .hover\:bg-\[\#00ff00\]\/10:hover {
+  background-color: rgba(0, 136, 0, 0.1) !important;
+}
+
+.light-theme .bg-\[\#00ff00\]\/20,
+.light-theme .hover\:bg-\[\#00ff00\]\/20:hover {
+  background-color: rgba(0, 136, 0, 0.15) !important;
+}
+
+.light-theme .border-\[\#00ff00\]\/20,
+.light-theme .border-\[\#00ff00\]\/30 {
+  border-color: rgba(0, 136, 0, 0.25) !important;
+}
+
+.light-theme .bg-black\/30,
+.light-theme .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.light-theme .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Track info in light mode */
+.light-theme .track-info {
+  color: #008800;
+}
+
+.light-theme .playlist-track:hover {
+  background-color: rgba(0, 136, 0, 0.1) !important;
+}
+
+.light-theme .browser-track:hover {
+  background-color: rgba(0, 136, 0, 0.1) !important;
+}
+
+/* Select dropdowns in light mode */
+.light-theme select {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  color: #008800 !important;
+  border-color: rgba(0, 136, 0, 0.3) !important;
+}
+
+.light-theme input[type="text"] {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  color: #008800 !important;
+  border-color: rgba(0, 136, 0, 0.3) !important;
+}
+
+.light-theme input::placeholder {
+  color: rgba(0, 136, 0, 0.4) !important;
+}
