@@ -20,6 +20,7 @@ export function YouTubePlayerWrapper({ className }: YouTubePlayerWrapperProps) {
     isPlaying,
     volume,
     isMuted,
+    playbackSpeed,
     setIsPlaying,
     setCurrentTime,
     setDuration,
@@ -35,6 +36,9 @@ export function YouTubePlayerWrapper({ className }: YouTubePlayerWrapperProps) {
       // Set initial volume
       event.target.setVolume(isMuted ? 0 : volume);
       
+      // Set playback speed
+      event.target.setPlaybackRate(playbackSpeed);
+      
       // Get duration
       const duration = await event.target.getDuration();
       if (duration) {
@@ -43,7 +47,7 @@ export function YouTubePlayerWrapper({ className }: YouTubePlayerWrapperProps) {
 
       setIsLoading(false);
     },
-    [volume, isMuted, setDuration, setIsLoading]
+    [volume, isMuted, playbackSpeed, setDuration, setIsLoading]
   );
 
   // Handle player state change
@@ -128,6 +132,26 @@ export function YouTubePlayerWrapper({ className }: YouTubePlayerWrapperProps) {
     if (!playerRef.current) return;
     playerRef.current.setVolume(isMuted ? 0 : volume);
   }, [volume, isMuted]);
+
+  // Sync playback speed
+  useEffect(() => {
+    if (!playerRef.current) return;
+    playerRef.current.setPlaybackRate(playbackSpeed);
+  }, [playbackSpeed]);
+
+  // Listen for speed change events
+  useEffect(() => {
+    const handleSpeedChange = (e: CustomEvent<{ speed: number }>) => {
+      if (playerRef.current) {
+        playerRef.current.setPlaybackRate(e.detail.speed);
+      }
+    };
+
+    window.addEventListener('youamp:speed', handleSpeedChange as EventListener);
+    return () => {
+      window.removeEventListener('youamp:speed', handleSpeedChange as EventListener);
+    };
+  }, []);
 
   // Cleanup
   useEffect(() => {

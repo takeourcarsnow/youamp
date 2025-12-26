@@ -6,3 +6,5 @@ export { WinampSlider } from './WinampSlider';
 export { LEDDisplay } from './LEDDisplay';
 export { MarqueeText } from './MarqueeText';
 export { Visualization } from './Visualization';
+export { EnhancedVisualization } from './EnhancedVisualization';
+export { ContextMenu, useContextMenu } from './ContextMenu';

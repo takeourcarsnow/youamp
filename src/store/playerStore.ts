@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Track, RepeatMode, ShuffleMode } from '@/types';
+import { Track, RepeatMode, ShuffleMode, PlaybackSpeed } from '@/types';
 
 interface PlayerStore {
   // Current state
@@ -17,6 +17,7 @@ interface PlayerStore {
   repeatMode: RepeatMode;
   shuffleMode: ShuffleMode;
   isLoading: boolean;
+  playbackSpeed: PlaybackSpeed;
 
   // Actions
   setCurrentTrack: (track: Track | null) => void;
@@ -30,6 +31,7 @@ interface PlayerStore {
   setShuffleMode: (mode: ShuffleMode) => void;
   toggleShuffleMode: () => void;
   setIsLoading: (isLoading: boolean) => void;
+  setPlaybackSpeed: (speed: PlaybackSpeed) => void;
 
   // Queue management
   addToQueue: (track: Track) => void;
@@ -37,12 +39,14 @@ interface PlayerStore {
   removeFromQueue: (trackId: string) => void;
   clearQueue: () => void;
   reorderQueue: (fromIndex: number, toIndex: number) => void;
-  
-  // Navigation
   playNext: () => void;
   playPrevious: () => void;
   playTrack: (track: Track) => void;
   playTrackAtIndex: (index: number) => void;
+
+  // Queue operations (add to front)
+  addToQueueNext: (track: Track) => void;
+  addMultipleToQueueNext: (tracks: Track[]) => void;
 
   // Utility
   getNextTrack: () => Track | null;
@@ -65,6 +69,7 @@ export const usePlayerStore = create<PlayerStore>()(
       repeatMode: 'none',
       shuffleMode: 'off',
       isLoading: false,
+      playbackSpeed: 1,
 
       // Basic setters
       setCurrentTrack: (track) => set({ currentTrack: track }),
@@ -87,12 +92,31 @@ export const usePlayerStore = create<PlayerStore>()(
           shuffleMode: state.shuffleMode === 'off' ? 'on' : 'off',
         })),
       setIsLoading: (isLoading) => set({ isLoading }),
+      setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
 
       // Queue management
       addToQueue: (track) =>
         set((state) => ({ queue: [...state.queue, track] })),
       addMultipleToQueue: (tracks) =>
         set((state) => ({ queue: [...state.queue, ...tracks] })),
+      addToQueueNext: (track) =>
+        set((state) => {
+          const currentIndex = state.currentTrack
+            ? state.queue.findIndex((t) => t.id === state.currentTrack!.id)
+            : -1;
+          const newQueue = [...state.queue];
+          newQueue.splice(currentIndex + 1, 0, track);
+          return { queue: newQueue };
+        }),
+      addMultipleToQueueNext: (tracks) =>
+        set((state) => {
+          const currentIndex = state.currentTrack
+            ? state.queue.findIndex((t) => t.id === state.currentTrack!.id)
+            : -1;
+          const newQueue = [...state.queue];
+          newQueue.splice(currentIndex + 1, 0, ...tracks);
+          return { queue: newQueue };
+        }),
       removeFromQueue: (trackId) =>
         set((state) => ({
           queue: state.queue.filter((t) => t.id !== trackId),
@@ -252,6 +276,7 @@ export const usePlayerStore = create<PlayerStore>()(
         repeatMode: state.repeatMode,
         shuffleMode: state.shuffleMode,
         queue: state.queue,
+        playbackSpeed: state.playbackSpeed,
       }),
     }
   )

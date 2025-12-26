@@ -3,7 +3,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { WinampWindow, Visualization } from '@/components/ui';
+import { WinampWindow, EnhancedVisualization } from '@/components/ui';
 import {
   TransportControls,
   VolumeControl,
@@ -15,9 +15,10 @@ import {
 } from '@/components/player';
 import { usePlayerStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
+import { VisualizationMode } from '@/types';
 
 export function MainWindow() {
-  const { mainWindow, setWindowPosition, toggleWindow, theme, toggleTheme } = useUIStore();
+  const { mainWindow, setWindowPosition, toggleWindow, theme, toggleTheme, visualizationMode, setVisualizationMode, toggleMiniPlayer } = useUIStore();
   const { isPlaying, currentTrack } = usePlayerStore();
   const [showRemaining, setShowRemaining] = useState(false);
 
@@ -31,15 +32,24 @@ export function MainWindow() {
       onClose={() => toggleWindow('mainWindow')}
       width={275}
       extraButtons={
-        <button
-          onClick={toggleTheme}
-          className="winamp-button w-[9px] h-[9px] mr-1"
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-        >
-          <span className="text-[8px] leading-none">
-            {theme === 'dark' ? '☀' : '☾'}
-          </span>
-        </button>
+        <>
+          <button
+            onClick={toggleMiniPlayer}
+            className="winamp-button w-[9px] h-[9px] mr-1"
+            title="Mini player mode"
+          >
+            <span className="text-[8px] leading-none">▪</span>
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="winamp-button w-[9px] h-[9px] mr-1"
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+          >
+            <span className="text-[8px] leading-none">
+              {theme === 'dark' ? '☀' : '☾'}
+            </span>
+          </button>
+        </>
       }
     >
       <div className="main-window-content">
@@ -54,9 +64,14 @@ export function MainWindow() {
             <TimeDisplay showRemaining={showRemaining} />
           </div>
 
-          {/* Visualization */}
+          {/* Enhanced Visualization */}
           <div className="flex-1 bg-black/50 rounded overflow-hidden">
-            <Visualization isPlaying={isPlaying} barCount={19} />
+            <EnhancedVisualization 
+              isPlaying={isPlaying} 
+              barCount={19}
+              mode={visualizationMode}
+              onModeChange={(mode: VisualizationMode) => setVisualizationMode(mode)}
+            />
           </div>
         </div>
 

@@ -12,6 +12,24 @@ export interface Track {
   addedAt: Date;
 }
 
+export type PlaybackSpeed = 0.25 | 0.5 | 0.75 | 1 | 1.25 | 1.5 | 1.75 | 2;
+
+export const PLAYBACK_SPEEDS: PlaybackSpeed[] = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
+export type VisualizationMode = 'bars' | 'wave' | 'spectrum' | 'oscilloscope' | 'circle';
+
+export type ThemeColor = 'green' | 'blue' | 'purple' | 'orange' | 'red' | 'cyan' | 'pink';
+
+export const THEME_COLORS: { name: ThemeColor; hex: string }[] = [
+  { name: 'green', hex: '#00ff00' },
+  { name: 'blue', hex: '#00aaff' },
+  { name: 'purple', hex: '#aa00ff' },
+  { name: 'orange', hex: '#ff8800' },
+  { name: 'red', hex: '#ff0044' },
+  { name: 'cyan', hex: '#00ffff' },
+  { name: 'pink', hex: '#ff00aa' },
+];
+
 export type Genre =
   | 'rock'
   | 'pop'
@@ -112,12 +130,26 @@ export interface WindowState {
   isMinimized: boolean;
 }
 
+export type WindowName = 
+  | 'mainWindow' 
+  | 'equalizerWindow' 
+  | 'playlistWindow' 
+  | 'browserWindow'
+  | 'lyricsWindow'
+  | 'playlistManagerWindow';
+
 export interface UIState {
   theme: Theme;
+  themeColor: ThemeColor;
   mainWindow: WindowState;
   equalizerWindow: WindowState;
   playlistWindow: WindowState;
   browserWindow: WindowState;
+  lyricsWindow: WindowState;
+  playlistManagerWindow: WindowState;
+  miniPlayerMode: boolean;
+  miniPlayerPosition: WindowPosition;
+  visualizationMode: VisualizationMode;
 }
 
 export interface SearchFilters {

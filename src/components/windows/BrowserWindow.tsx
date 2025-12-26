@@ -1,10 +1,11 @@
-// Music Browser Window - browse by genre, artist, search
+// Music Browser Window - browse by genre, artist, search, YouTube
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { WinampWindow } from '@/components/ui';
-import { useUIStore, usePlayerStore } from '@/store';
+import React, { useState, useMemo, useCallback } from 'react';
+import { WinampWindow, ContextMenu, useContextMenu } from '@/components/ui';
+import { useUIStore, usePlayerStore, usePlaylistStore } from '@/store';
+import { showToast } from '@/components/providers';
 import { Track, Genre, GENRES } from '@/types';
 import {
   SAMPLE_TRACKS,
@@ -14,19 +15,33 @@ import {
   getRandomTracks,
   searchTracks,
 } from '@/lib/data';
-import { formatDuration, cn } from '@/lib/utils';
+import { 
+  formatDuration, 
+  cn, 
+  searchYouTubeInvidious, 
+  youtubeResultToTrack, 
+  parseYouTubeDuration 
+} from '@/lib/utils';
+import { useDebounce } from '@/hooks';
 
-type BrowserTab = 'all' | 'genre' | 'artist' | 'search';
+type BrowserTab = 'all' | 'genre' | 'artist' | 'search' | 'youtube';
 
 export function BrowserWindow() {
   const { browserWindow, setWindowPosition, toggleWindow } = useUIStore();
-  const { addToQueue, addMultipleToQueue, playTrack, queue } = usePlayerStore();
+  const { addToQueue, addMultipleToQueue, playTrack, queue, addToQueueNext } = usePlayerStore();
+  const { playlists, addTrackToPlaylist } = usePlaylistStore();
+  const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
 
   const [activeTab, setActiveTab] = useState<BrowserTab>('all');
   const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [youtubeQuery, setYoutubeQuery] = useState('');
+  const [youtubeResults, setYoutubeResults] = useState<Track[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  
   const artists = useMemo(() => getAllArtists(), []);
 
   const displayedTracks = useMemo(() => {
@@ -36,16 +51,36 @@ export function BrowserWindow() {
       case 'artist':
         return selectedArtist ? getTracksByArtist(selectedArtist) : [];
       case 'search':
-        return searchQuery.trim() ? searchTracks(searchQuery) : [];
+        return debouncedSearch.trim() ? searchTracks(debouncedSearch) : [];
+      case 'youtube':
+        return youtubeResults;
       default:
         return SAMPLE_TRACKS;
     }
-  }, [activeTab, selectedGenre, selectedArtist, searchQuery]);
+  }, [activeTab, selectedGenre, selectedArtist, debouncedSearch, youtubeResults]);
+
+  const handleYouTubeSearch = useCallback(async () => {
+    if (!youtubeQuery.trim()) return;
+    
+    setIsSearching(true);
+    try {
+      const results = await searchYouTubeInvidious(youtubeQuery, 15);
+      const tracks = results.map(r => 
+        youtubeResultToTrack(r, r.duration ? parseYouTubeDuration(r.duration) : 0)
+      );
+      setYoutubeResults(tracks);
+    } catch (error) {
+      showToast.error('Search failed. Try again later.');
+    } finally {
+      setIsSearching(false);
+    }
+  }, [youtubeQuery]);
 
   if (!browserWindow.isOpen) return null;
 
   const handleAddTrack = (track: Track) => {
     addToQueue(track);
+    showToast.trackAdded(track.title);
   };
 
   const handlePlayTrack = (track: Track) => {
@@ -60,6 +95,7 @@ export function BrowserWindow() {
       (t) => !queue.find((q) => q.youtubeId === t.youtubeId)
     );
     addMultipleToQueue(tracksToAdd);
+    showToast.tracksAdded(tracksToAdd.length);
   };
 
   const handlePlayRandom = () => {
@@ -68,6 +104,7 @@ export function BrowserWindow() {
     if (randomTracks.length > 0) {
       playTrack(randomTracks[0]);
     }
+    showToast.tracksAdded(randomTracks.length);
   };
 
   const handleShuffleAll = () => {
@@ -76,7 +113,35 @@ export function BrowserWindow() {
     if (shuffled.length > 0) {
       playTrack(shuffled[0]);
     }
+    showToast.tracksAdded(shuffled.length);
   };
+
+  const getTrackContextMenuItems = (track: Track) => [
+    { label: 'Play', icon: '▶', onClick: () => handlePlayTrack(track) },
+    { label: 'Play Next', icon: '⏭', onClick: () => {
+      addToQueueNext(track);
+      showToast.trackAdded(track.title);
+    }},
+    { label: 'Add to Queue', icon: '+', onClick: () => handleAddTrack(track) },
+    { divider: true, label: '', onClick: () => {} },
+    ...playlists.map(playlist => ({
+      label: `Add to "${playlist.name}"`,
+      icon: '📁',
+      onClick: () => {
+        addTrackToPlaylist(playlist.id, track);
+        showToast.trackAdded(track.title);
+      },
+    })),
+    { divider: true, label: '', onClick: () => {} },
+    { 
+      label: 'Copy YouTube Link', 
+      icon: '🔗', 
+      onClick: () => {
+        navigator.clipboard.writeText(`https://youtube.com/watch?v=${track.youtubeId}`);
+        showToast.copiedToClipboard();
+      }
+    },
+  ];
 
   return (
     <WinampWindow
@@ -89,7 +154,7 @@ export function BrowserWindow() {
       <div className="browser-content">
         {/* Tabs */}
         <div className="flex border-b border-[#00ff00]/30 mb-2">
-          {(['all', 'genre', 'artist', 'search'] as BrowserTab[]).map((tab) => (
+          {(['all', 'genre', 'artist', 'search', 'youtube'] as BrowserTab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -100,26 +165,28 @@ export function BrowserWindow() {
                   : 'text-gray-400 hover:text-[#00ff00]'
               )}
             >
-              {tab}
+              {tab === 'youtube' ? 'YouTube' : tab}
             </button>
           ))}
         </div>
 
         {/* Quick Actions */}
-        <div className="flex gap-2 mb-2">
-          <button
-            onClick={handlePlayRandom}
-            className="flex-1 py-1 text-xs bg-[#00ff00]/10 hover:bg-[#00ff00]/20 text-[#00ff00] rounded transition-colors"
-          >
-            🎲 Random 10
-          </button>
-          <button
-            onClick={handleShuffleAll}
-            className="flex-1 py-1 text-xs bg-[#00ff00]/10 hover:bg-[#00ff00]/20 text-[#00ff00] rounded transition-colors"
-          >
-            🔀 Shuffle All
-          </button>
-        </div>
+        {activeTab !== 'youtube' && (
+          <div className="flex gap-2 mb-2">
+            <button
+              onClick={handlePlayRandom}
+              className="flex-1 py-1 text-xs bg-[#00ff00]/10 hover:bg-[#00ff00]/20 text-[#00ff00] rounded transition-colors"
+            >
+              🎲 Random 10
+            </button>
+            <button
+              onClick={handleShuffleAll}
+              className="flex-1 py-1 text-xs bg-[#00ff00]/10 hover:bg-[#00ff00]/20 text-[#00ff00] rounded transition-colors"
+            >
+              🔀 Shuffle All
+            </button>
+          </div>
+        )}
 
         {/* Tab Content */}
         <div className="mb-2">
@@ -169,6 +236,27 @@ export function BrowserWindow() {
               className="w-full bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30 mb-2 placeholder:text-[#00ff00]/50"
             />
           )}
+
+          {/* YouTube search */}
+          {activeTab === 'youtube' && (
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={youtubeQuery}
+                onChange={(e) => setYoutubeQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleYouTubeSearch()}
+                placeholder="Search YouTube..."
+                className="flex-1 bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30 placeholder:text-[#00ff00]/50"
+              />
+              <button
+                onClick={handleYouTubeSearch}
+                disabled={isSearching || !youtubeQuery.trim()}
+                className="px-3 py-1 text-xs bg-[#ff0000]/80 hover:bg-[#ff0000] text-white rounded disabled:opacity-50"
+              >
+                {isSearching ? '...' : '🔍'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Results header */}
@@ -190,7 +278,9 @@ export function BrowserWindow() {
         <div className="browser-tracks max-h-[250px] overflow-y-auto scrollbar-thin">
           {displayedTracks.length === 0 ? (
             <div className="text-center py-4 text-gray-500 text-xs">
-              {activeTab === 'search' && !searchQuery.trim()
+              {activeTab === 'youtube' && !youtubeResults.length
+                ? isSearching ? 'Searching...' : 'Search YouTube for music'
+                : activeTab === 'search' && !debouncedSearch.trim()
                 ? 'Enter a search term'
                 : activeTab === 'genre' && !selectedGenre
                 ? 'Select a genre'
@@ -208,12 +298,14 @@ export function BrowserWindow() {
                     'browser-track flex items-center gap-2 px-2 py-1.5',
                     'hover:bg-[#00ff00]/10 transition-colors group'
                   )}
+                  onContextMenu={(e) => openContextMenu(e, getTrackContextMenuItems(track))}
                 >
                   {/* Thumbnail */}
                   <img
                     src={track.thumbnail}
                     alt={track.title}
                     className="w-8 h-8 rounded object-cover"
+                    loading="lazy"
                   />
 
                   {/* Track info */}
@@ -222,13 +314,13 @@ export function BrowserWindow() {
                       {track.title}
                     </div>
                     <div className="text-[10px] text-gray-400 truncate">
-                      {track.artist} • {track.genre}
+                      {track.artist} {track.genre !== 'other' && `• ${track.genre}`}
                     </div>
                   </div>
 
                   {/* Duration */}
                   <span className="text-[10px] text-gray-500">
-                    {formatDuration(track.duration)}
+                    {track.duration > 0 ? formatDuration(track.duration) : '--:--'}
                   </span>
 
                   {/* Actions */}
@@ -260,6 +352,15 @@ export function BrowserWindow() {
           )}
         </div>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <ContextMenu
+          items={contextMenu.items}
+          position={contextMenu.position}
+          onClose={closeContextMenu}
+        />
+      )}
     </WinampWindow>
   );
 }
