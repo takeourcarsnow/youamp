@@ -2,14 +2,13 @@
 
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { WinampWindow, ContextMenu, useContextMenu } from '@/components/ui';
 import { useUIStore, usePlayerStore, usePlaylistStore } from '@/store';
 import { showToast } from '@/components/providers';
 import { Track, Genre, GENRES } from '@/types';
 import {
   SAMPLE_TRACKS,
-  getTracksByGenre,
   getTracksByArtist,
   getAllArtists,
   getRandomTracks,
@@ -20,7 +19,8 @@ import {
   cn, 
   searchYouTubeInvidious, 
   youtubeResultToTrack, 
-  parseYouTubeDuration 
+  parseYouTubeDuration,
+  searchByGenre,
 } from '@/lib/utils';
 import { useDebounce } from '@/hooks';
 
@@ -38,16 +38,59 @@ export function BrowserWindow() {
   const [searchQuery, setSearchQuery] = useState('');
   const [youtubeQuery, setYoutubeQuery] = useState('');
   const [youtubeResults, setYoutubeResults] = useState<Track[]>([]);
+  const [genreTracks, setGenreTracks] = useState<Track[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isLoadingGenre, setIsLoadingGenre] = useState(false);
 
   const debouncedSearch = useDebounce(searchQuery, 300);
   
   const artists = useMemo(() => getAllArtists(), []);
 
+  // Load genre tracks dynamically from YouTube when genre is selected
+  useEffect(() => {
+    if (activeTab === 'genre' && selectedGenre) {
+      setIsLoadingGenre(true);
+      setGenreTracks([]);
+      
+      searchByGenre(selectedGenre, 20)
+        .then((tracks) => {
+          setGenreTracks(tracks);
+          if (tracks.length === 0) {
+            showToast.error('No tracks found. Try again.');
+          }
+        })
+        .catch(() => {
+          showToast.error('Failed to load genre tracks');
+        })
+        .finally(() => {
+          setIsLoadingGenre(false);
+        });
+    }
+  }, [activeTab, selectedGenre]);
+
+  // Refresh genre tracks function
+  const handleRefreshGenre = useCallback(async () => {
+    if (!selectedGenre) return;
+    setIsLoadingGenre(true);
+    setGenreTracks([]);
+    
+    try {
+      const tracks = await searchByGenre(selectedGenre, 20);
+      setGenreTracks(tracks);
+      if (tracks.length === 0) {
+        showToast.error('No tracks found. Try again.');
+      }
+    } catch {
+      showToast.error('Failed to load genre tracks');
+    } finally {
+      setIsLoadingGenre(false);
+    }
+  }, [selectedGenre]);
+
   const displayedTracks = useMemo(() => {
     switch (activeTab) {
       case 'genre':
-        return selectedGenre ? getTracksByGenre(selectedGenre) : [];
+        return genreTracks;
       case 'artist':
         return selectedArtist ? getTracksByArtist(selectedArtist) : [];
       case 'search':
@@ -57,18 +100,22 @@ export function BrowserWindow() {
       default:
         return SAMPLE_TRACKS;
     }
-  }, [activeTab, selectedGenre, selectedArtist, debouncedSearch, youtubeResults]);
+  }, [activeTab, genreTracks, selectedArtist, debouncedSearch, youtubeResults]);
 
   const handleYouTubeSearch = useCallback(async () => {
     if (!youtubeQuery.trim()) return;
     
     setIsSearching(true);
+    setYoutubeResults([]);
     try {
       const results = await searchYouTubeInvidious(youtubeQuery, 15);
       const tracks = results.map(r => 
-        youtubeResultToTrack(r, r.duration ? parseYouTubeDuration(r.duration) : 0)
+        youtubeResultToTrack(r, r.durationSeconds || (r.duration ? parseYouTubeDuration(r.duration) : 0))
       );
       setYoutubeResults(tracks);
+      if (tracks.length === 0) {
+        showToast.error('No results found. Try different keywords.');
+      }
     } catch (error) {
       showToast.error('Search failed. Try again later.');
     } finally {
@@ -195,27 +242,46 @@ export function BrowserWindow() {
         <div className="mb-1">
           {/* Genre selector */}
           {activeTab === 'genre' && (
-            <div className="flex flex-wrap gap-px mb-1">
-              {GENRES.map((genre) => (
-                <button
-                  key={genre}
-                  onClick={() => setSelectedGenre(genre)}
-                  className={cn(
-                    'px-1.5 py-0.5 text-[7px] uppercase font-bold transition-none',
-                    selectedGenre === genre
-                      ? 'bg-[#00ff00] text-black'
-                      : 'bg-[#2a2a2a] text-[#00aa00] hover:bg-[#3a3a3a]'
-                  )}
-                  style={{
-                    border: '1px solid',
-                    borderColor: selectedGenre === genre 
-                      ? '#00ff00 #003300 #003300 #00ff00'
-                      : '#4a4a4a #1a1a1a #1a1a1a #4a4a4a',
-                  }}
-                >
-                  {genre}
-                </button>
-              ))}
+            <div className="mb-1">
+              <div className="flex flex-wrap gap-px mb-1">
+                {GENRES.map((genre) => (
+                  <button
+                    key={genre}
+                    onClick={() => setSelectedGenre(genre)}
+                    disabled={isLoadingGenre}
+                    className={cn(
+                      'px-1.5 py-0.5 text-[7px] uppercase font-bold transition-none',
+                      selectedGenre === genre
+                        ? 'bg-[#00ff00] text-black'
+                        : 'bg-[#2a2a2a] text-[#00aa00] hover:bg-[#3a3a3a]',
+                      isLoadingGenre && 'opacity-50'
+                    )}
+                    style={{
+                      border: '1px solid',
+                      borderColor: selectedGenre === genre 
+                        ? '#00ff00 #003300 #003300 #00ff00'
+                        : '#4a4a4a #1a1a1a #1a1a1a #4a4a4a',
+                    }}
+                  >
+                    {genre}
+                  </button>
+                ))}
+              </div>
+              {selectedGenre && (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={handleRefreshGenre}
+                    disabled={isLoadingGenre}
+                    className="playlist-control-btn text-[8px] px-2"
+                    title="Load fresh tracks"
+                  >
+                    {isLoadingGenre ? '...' : '🔄 REFRESH'}
+                  </button>
+                  <span className="text-[7px] text-[#666] font-mono">
+                    Fresh from YouTube
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
@@ -296,11 +362,13 @@ export function BrowserWindow() {
           {displayedTracks.length === 0 ? (
             <div className="text-center py-4 text-[#006600] text-[9px] font-mono">
               {activeTab === 'youtube' && !youtubeResults.length
-                ? isSearching ? 'Searching...' : 'Search YouTube'
-                : activeTab === 'search' && !debouncedSearch.trim()
-                ? 'Enter search term'
+                ? isSearching ? 'Searching YouTube...' : 'Search YouTube'
+                : activeTab === 'genre' && isLoadingGenre
+                ? 'Loading fresh tracks...'
                 : activeTab === 'genre' && !selectedGenre
                 ? 'Select a genre'
+                : activeTab === 'search' && !debouncedSearch.trim()
+                ? 'Enter search term'
                 : activeTab === 'artist' && !selectedArtist
                 ? 'Select an artist'
                 : 'No tracks found'}

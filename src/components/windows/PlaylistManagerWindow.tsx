@@ -18,8 +18,9 @@ export function PlaylistManagerWindow() {
     renamePlaylist,
     setActivePlaylist,
     getTotalDuration,
+    addTracksToPlaylist,
   } = usePlaylistStore();
-  const { addMultipleToQueue, clearQueue, playTrack } = usePlayerStore();
+  const { queue, addMultipleToQueue, clearQueue, playTrack } = usePlayerStore();
 
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -35,6 +36,18 @@ export function PlaylistManagerWindow() {
     }
   };
 
+  const handleSaveCurrentQueue = () => {
+    if (queue.length === 0) {
+      showToast.error('No tracks in queue to save');
+      return;
+    }
+    const name = newPlaylistName.trim() || `Playlist ${new Date().toLocaleDateString()}`;
+    const playlist = createPlaylist(name);
+    addTracksToPlaylist(playlist.id, queue);
+    showToast.playlistCreated(playlist.name);
+    setNewPlaylistName('');
+  };
+
   const handleLoadPlaylist = (playlistId: string) => {
     const playlist = playlists.find(p => p.id === playlistId);
     if (playlist) {
@@ -44,6 +57,14 @@ export function PlaylistManagerWindow() {
         playTrack(playlist.tracks[0]);
       }
       setActivePlaylist(playlistId);
+      showToast.tracksAdded(playlist.tracks.length);
+    }
+  };
+
+  const handleAddToQueue = (playlistId: string) => {
+    const playlist = playlists.find(p => p.id === playlistId);
+    if (playlist && playlist.tracks.length > 0) {
+      addMultipleToQueue(playlist.tracks);
       showToast.tracksAdded(playlist.tracks.length);
     }
   };
@@ -76,7 +97,7 @@ export function PlaylistManagerWindow() {
     >
       <div className="playlist-manager-content">
         {/* Create new playlist */}
-        <div className="flex gap-1 mb-2">
+        <div className="flex gap-1 mb-1">
           <input
             type="text"
             value={newPlaylistName}
@@ -96,8 +117,22 @@ export function PlaylistManagerWindow() {
             disabled={!newPlaylistName.trim()}
             className="playlist-control-btn"
             style={{ padding: '2px 6px' }}
+            title="Create empty playlist"
           >
             +NEW
+          </button>
+        </div>
+
+        {/* Save current queue */}
+        <div className="flex gap-1 mb-2">
+          <button
+            onClick={handleSaveCurrentQueue}
+            disabled={queue.length === 0}
+            className="playlist-control-btn flex-1 text-[8px]"
+            style={{ background: '#003300' }}
+            title="Save current queue as playlist"
+          >
+            💾 SAVE CURRENT QUEUE ({queue.length} tracks)
           </button>
         </div>
 
@@ -163,9 +198,17 @@ export function PlaylistManagerWindow() {
                     onClick={() => handleLoadPlaylist(playlist.id)}
                     className="playlist-control-btn"
                     style={{ padding: '1px 4px', fontSize: '8px' }}
-                    title="Load playlist"
+                    title="Replace queue with playlist"
                   >
                     LOAD
+                  </button>
+                  <button
+                    onClick={() => handleAddToQueue(playlist.id)}
+                    className="playlist-control-btn"
+                    style={{ padding: '1px 4px', fontSize: '8px' }}
+                    title="Add to current queue"
+                  >
+                    +ADD
                   </button>
                   <button
                     onClick={() => handleDelete(playlist.id, playlist.name)}
