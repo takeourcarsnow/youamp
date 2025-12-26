@@ -64,18 +64,23 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
   return createPortal(
     <div
       ref={menuRef}
-      className="context-menu fixed z-[9999] min-w-[160px] py-1 rounded-sm overflow-hidden"
+      className="context-menu fixed z-[9999] min-w-[140px] py-px overflow-hidden"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,
-        background: 'linear-gradient(180deg, #2a2a40 0%, #1a1a2e 100%)',
-        border: '1px solid #3a3a5a',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 255, 0, 0.1)',
+        background: '#232323',
+        border: '2px solid',
+        borderColor: '#4a4a4a #0a0a0a #0a0a0a #4a4a4a',
+        boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.8)',
       }}
     >
       {items.map((item, index) => (
         item.divider ? (
-          <div key={index} className="h-px bg-[#00ff00]/20 my-1" />
+          <div 
+            key={index} 
+            className="h-px mx-1 my-px" 
+            style={{ background: '#3a3a3a' }}
+          />
         ) : (
           <button
             key={index}
@@ -87,16 +92,16 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
             }}
             disabled={item.disabled}
             className={cn(
-              'w-full px-3 py-1.5 text-left text-xs flex items-center gap-2',
-              'transition-colors',
+              'w-full px-2 py-0.5 text-left text-[9px] flex items-center gap-1.5',
+              'transition-none font-mono',
               item.disabled 
-                ? 'text-gray-600 cursor-not-allowed' 
+                ? 'text-[#444] cursor-not-allowed' 
                 : item.danger
-                  ? 'text-[#ff4444] hover:bg-[#ff4444]/10'
-                  : 'text-[#00ff00] hover:bg-[#00ff00]/10'
+                  ? 'text-[#ff6666] hover:bg-[#aa0000] hover:text-white'
+                  : 'text-[#00aa00] hover:bg-[#00aa00] hover:text-black'
             )}
           >
-            {item.icon && <span className="w-4">{item.icon}</span>}
+            {item.icon && <span className="w-3 text-center">{item.icon}</span>}
             {item.label}
           </button>
         )

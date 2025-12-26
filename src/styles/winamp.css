@@ -1,252 +1,427 @@
-/* YouAmp - Winamp-inspired styles */
+/* YouAmp - Classic Winamp-inspired styles */
+
+/* ===== CLASSIC WINAMP COLORS ===== */
+:root {
+  --winamp-bg-dark: #232323;
+  --winamp-bg-medium: #2b2b2b;
+  --winamp-bg-light: #3c3c3c;
+  --winamp-border-dark: #0a0a0a;
+  --winamp-border-light: #4a4a4a;
+  --winamp-highlight: #5a5a5a;
+  --winamp-text-green: #00ff00;
+  --winamp-text-green-dim: #00aa00;
+  --winamp-text-dark: #004400;
+  --winamp-display-bg: #000000;
+  --winamp-display-border: #1a1a1a;
+  --winamp-button-face: #3a3a3a;
+  --winamp-button-light: #5a5a5a;
+  --winamp-button-shadow: #1a1a1a;
+}
 
 /* ===== WINAMP WINDOW ===== */
 .winamp-window {
-  @apply rounded-sm overflow-hidden;
-  background: linear-gradient(180deg, #2a2a40 0%, #1a1a2e 100%);
-  border: 1px solid #3a3a5a;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  background: var(--winamp-bg-dark);
+  border: 2px solid;
+  border-color: var(--winamp-border-light) var(--winamp-border-dark) var(--winamp-border-dark) var(--winamp-border-light);
+  box-shadow: 
+    inset 1px 1px 0 var(--winamp-highlight),
+    2px 2px 8px rgba(0, 0, 0, 0.8);
+  border-radius: 0;
+  image-rendering: pixelated;
 }
 
 .winamp-titlebar {
-  @apply px-2 py-1;
-  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
-  border-bottom: 1px solid #1a1a2e;
+  background: linear-gradient(180deg, 
+    #4a6a4a 0%, 
+    #2a4a2a 30%, 
+    #1a3a1a 70%, 
+    #0a2a0a 100%
+  );
+  padding: 2px 3px;
+  border-bottom: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 14px;
 }
 
 .winamp-title {
-  @apply text-xs font-bold;
-  color: #00ff00;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  letter-spacing: 0.5px;
 }
 
 .winamp-content {
-  @apply p-2;
+  padding: 3px;
+  background: var(--winamp-bg-dark);
 }
 
-/* ===== WINAMP BUTTONS ===== */
+/* ===== WINAMP TITLE BAR BUTTONS ===== */
 .winamp-button {
-  @apply flex items-center justify-center rounded-sm;
-  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
-  border: 1px solid #4a4a6a;
-  color: #00ff00;
-  transition: all 0.1s ease;
+  background: linear-gradient(180deg, #6a6a6a 0%, #4a4a4a 40%, #3a3a3a 60%, #2a2a2a 100%);
+  border: 1px solid;
+  border-color: #7a7a7a #1a1a1a #1a1a1a #7a7a7a;
+  border-radius: 0;
+  color: #000;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .winamp-button:hover {
-  background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
-  box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+  background: linear-gradient(180deg, #7a7a7a 0%, #5a5a5a 40%, #4a4a4a 60%, #3a3a3a 100%);
 }
 
 .winamp-button:active {
-  background: linear-gradient(180deg, #2a2a40 0%, #3a3a5a 100%);
+  background: linear-gradient(180deg, #2a2a2a 0%, #3a3a3a 40%, #4a4a4a 60%, #5a5a5a 100%);
+  border-color: #1a1a1a #7a7a7a #7a7a7a #1a1a1a;
 }
 
 .winamp-button.winamp-close:hover {
-  background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
-  color: white;
+  background: linear-gradient(180deg, #ff6666 0%, #cc0000 50%, #aa0000 100%);
 }
 
-.winamp-button-small {
-  @apply text-[10px] px-1 py-0.5;
+/* ===== CLASSIC LED DISPLAY AREA ===== */
+.winamp-display {
+  background: #000;
+  border: 2px solid;
+  border-color: #0a0a0a #3a3a3a #3a3a3a #0a0a0a;
+  padding: 2px;
+  position: relative;
 }
 
-.winamp-button-icon {
-  @apply w-6 h-6;
+.winamp-display::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 1px,
+    rgba(0, 0, 0, 0.3) 1px,
+    rgba(0, 0, 0, 0.3) 2px
+  );
+  pointer-events: none;
 }
 
-.winamp-button-active {
-  background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%);
-  color: #000;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-}
-
-/* ===== TRANSPORT CONTROLS ===== */
+/* ===== CLASSIC TRANSPORT CONTROLS ===== */
 .transport-button {
-  @apply w-7 h-6 flex items-center justify-center rounded-sm;
-  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
-  border: 1px solid #4a4a6a;
-  color: #00ff00;
-  transition: all 0.1s ease;
+  width: 23px;
+  height: 18px;
+  background: linear-gradient(180deg, 
+    #5a5a5a 0%, 
+    #4a4a4a 20%, 
+    #3a3a3a 50%, 
+    #2a2a2a 80%, 
+    #1a1a1a 100%
+  );
+  border: 1px solid;
+  border-color: #6a6a6a #0a0a0a #0a0a0a #6a6a6a;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #aaa;
+  transition: none;
 }
 
 .transport-button:hover:not(:disabled) {
-  background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+  background: linear-gradient(180deg, 
+    #6a6a6a 0%, 
+    #5a5a5a 20%, 
+    #4a4a4a 50%, 
+    #3a3a3a 80%, 
+    #2a2a2a 100%
+  );
+  color: #00ff00;
 }
 
 .transport-button:active:not(:disabled) {
-  background: linear-gradient(180deg, #2a2a40 0%, #3a3a5a 100%);
+  background: linear-gradient(180deg, 
+    #1a1a1a 0%, 
+    #2a2a2a 20%, 
+    #3a3a3a 50%, 
+    #4a4a4a 80%, 
+    #5a5a5a 100%
+  );
+  border-color: #0a0a0a #6a6a6a #6a6a6a #0a0a0a;
 }
 
 .transport-button.active {
-  background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%);
+  background: linear-gradient(180deg, 
+    #00aa00 0%, 
+    #008800 50%, 
+    #006600 100%
+  );
   color: #000;
+  border-color: #00cc00 #003300 #003300 #00cc00;
 }
 
 .transport-button:disabled {
-  @apply opacity-40 cursor-not-allowed;
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-/* ===== SLIDER ===== */
+/* ===== CLASSIC SLIDER ===== */
 .winamp-slider {
-  @apply relative cursor-pointer;
+  position: relative;
+  cursor: pointer;
 }
 
 .winamp-slider-horizontal {
-  @apply h-3;
+  height: 10px;
+  padding: 3px 0;
 }
 
 .winamp-slider-vertical {
-  @apply w-3;
+  width: 14px;
 }
 
 .winamp-slider-track {
-  @apply absolute rounded-full;
-  background: linear-gradient(180deg, #1a1a2e 0%, #2a2a40 100%);
-  border: 1px solid #3a3a5a;
+  position: absolute;
+  background: linear-gradient(180deg, #0a0a0a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border: 1px solid;
+  border-color: #000 #3a3a3a #3a3a3a #000;
+  border-radius: 0;
 }
 
 .winamp-slider-horizontal .winamp-slider-track {
-  @apply w-full h-2 top-1/2 -translate-y-1/2;
+  width: 100%;
+  height: 4px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .winamp-slider-vertical .winamp-slider-track {
-  @apply h-full w-2 left-1/2 -translate-x-1/2;
+  height: 100%;
+  width: 6px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .winamp-slider-fill {
-  @apply absolute rounded-full;
-  background: linear-gradient(90deg, #00aa00 0%, #00ff00 100%);
-  box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  position: absolute;
+  background: linear-gradient(90deg, 
+    #006600 0%, 
+    #00aa00 50%, 
+    #00ff00 100%
+  );
+  border-radius: 0;
 }
 
 .winamp-slider-horizontal .winamp-slider-fill {
-  @apply h-full left-0 top-0;
+  height: 100%;
+  left: 0;
+  top: 0;
 }
 
 .winamp-slider-vertical .winamp-slider-fill {
-  @apply w-full left-0;
+  width: 100%;
+  left: 0;
 }
 
+/* Classic Winamp slider thumb */
 .winamp-slider-thumb {
-  @apply absolute w-3 h-3 rounded-full z-10;
-  background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%);
-  border: 1px solid #00ff00;
-  box-shadow:
-    0 0 8px rgba(0, 255, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: absolute;
+  z-index: 10;
+  cursor: pointer;
 }
 
 .winamp-slider-horizontal .winamp-slider-thumb {
-  @apply top-1/2 -translate-y-1/2;
+  width: 14px;
+  height: 10px;
+  top: 50%;
+  background: linear-gradient(180deg, 
+    #8a8a8a 0%, 
+    #6a6a6a 30%, 
+    #4a4a4a 70%, 
+    #2a2a2a 100%
+  );
+  border: 1px solid;
+  border-color: #9a9a9a #1a1a1a #1a1a1a #9a9a9a;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
 }
 
-/* ===== LED DISPLAY ===== */
+.winamp-slider-vertical .winamp-slider-thumb {
+  width: 14px;
+  height: 6px;
+  left: 50%;
+  background: linear-gradient(90deg, 
+    #8a8a8a 0%, 
+    #6a6a6a 30%, 
+    #4a4a4a 70%, 
+    #2a2a2a 100%
+  );
+  border: 1px solid;
+  border-color: #9a9a9a #1a1a1a #1a1a1a #9a9a9a;
+  border-radius: 0;
+  transform: translateX(-50%);
+}
+
+/* ===== LED DISPLAY TEXT ===== */
 .led-display {
-  font-family: 'Courier New', monospace;
-  text-shadow: 0 0 10px currentColor;
+  font-family: "Consolas", "Courier New", monospace;
+  letter-spacing: 2px;
+  text-shadow: 
+    0 0 6px currentColor,
+    0 0 12px currentColor;
 }
 
-/* ===== VISUALIZATION ===== */
+/* ===== VISUALIZATION AREA ===== */
 .visualization {
   background: #000;
-  border: 1px solid #1a1a2e;
-  border-radius: 2px;
-  padding: 2px;
+  border: 1px solid;
+  border-color: #000 #3a3a3a #3a3a3a #000;
+  border-radius: 0;
+  padding: 1px;
+  image-rendering: pixelated;
 }
 
 .visualization-bar {
-  min-width: 3px;
-  border-radius: 1px 1px 0 0;
+  min-width: 2px;
+  border-radius: 0;
+  image-rendering: pixelated;
 }
 
-/* ===== MODE BUTTONS ===== */
+/* ===== CLASSIC MODE BUTTONS ===== */
 .mode-button {
-  @apply w-7 h-5 flex items-center justify-center rounded-sm;
-  background: linear-gradient(180deg, #2a2a40 0%, #1a1a2e 100%);
-  border: 1px solid #3a3a5a;
+  width: 28px;
+  height: 12px;
+  font-size: 7px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border: 1px solid;
+  border-color: #4a4a4a #0a0a0a #0a0a0a #4a4a4a;
+  border-radius: 0;
   color: #666;
-  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: none;
 }
 
 .mode-button:hover {
   color: #00ff00;
-  border-color: #00ff00;
 }
 
 .mode-button-active {
   color: #00ff00;
-  background: linear-gradient(180deg, #1a3a1a 0%, #0a2a0a 100%);
-  border-color: #00ff00;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+  text-shadow: 0 0 4px #00ff00;
+  background: linear-gradient(180deg, #1a3a1a 0%, #0a2a0a 50%, #001a00 100%);
+  border-color: #00aa00 #003300 #003300 #00aa00;
 }
 
 /* ===== VOLUME ICON ===== */
 .volume-icon {
-  @apply w-5 h-5 flex items-center justify-center;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #00ff00;
-  transition: all 0.1s ease;
+  cursor: pointer;
 }
 
 .volume-icon:hover {
-  text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+  text-shadow: 0 0 8px #00ff00;
 }
 
 /* ===== MENU BAR ===== */
 .menu-button {
-  @apply px-2 py-0.5 text-xs rounded;
-  color: #888;
-  transition: all 0.1s ease;
+  padding: 1px 4px;
+  font-size: 8px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  text-transform: uppercase;
+  color: #aaa;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 0;
 }
 
 .menu-button:hover {
   color: #00ff00;
-  background: rgba(0, 255, 0, 0.1);
 }
 
 .menu-button-active {
   color: #00ff00;
-  background: rgba(0, 255, 0, 0.15);
+  text-shadow: 0 0 4px #00ff00;
 }
 
-/* ===== PLAYLIST ===== */
+/* ===== PLAYLIST STYLING ===== */
+.playlist-track {
+  font-size: 10px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.playlist-track:hover {
+  background: rgba(0, 255, 0, 0.05);
+}
+
 .playlist-control-btn {
-  @apply px-2 py-0.5 text-xs rounded;
-  background: rgba(0, 255, 0, 0.1);
+  padding: 2px 6px;
+  font-size: 9px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 50%, #2a2a2a 100%);
+  border: 1px solid;
+  border-color: #5a5a5a #1a1a1a #1a1a1a #5a5a5a;
   color: #00ff00;
-  transition: all 0.1s ease;
+  cursor: pointer;
+  border-radius: 0;
 }
 
 .playlist-control-btn:hover:not(:disabled) {
-  background: rgba(0, 255, 0, 0.2);
+  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 50%, #3a3a3a 100%);
+}
+
+.playlist-control-btn:active:not(:disabled) {
+  border-color: #1a1a1a #5a5a5a #5a5a5a #1a1a1a;
 }
 
 .playlist-control-btn:disabled {
-  @apply opacity-40 cursor-not-allowed;
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-/* ===== SCROLLBAR ===== */
+/* ===== SCROLLBAR - CLASSIC STYLE ===== */
 .scrollbar-thin::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: #1a1a2e;
-  border-radius: 4px;
+  background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border: 1px solid #0a0a0a;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%);
-  border-radius: 4px;
-  border: 1px solid #4a4a6a;
+  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 30%, #3a3a3a 70%, #2a2a2a 100%);
+  border: 1px solid;
+  border-color: #6a6a6a #1a1a1a #1a1a1a #6a6a6a;
+  border-radius: 0;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
+  background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 30%, #4a4a4a 70%, #3a3a3a 100%);
+}
+
+.scrollbar-thin::-webkit-scrollbar-button {
+  background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 50%, #2a2a2a 100%);
+  border: 1px solid;
+  border-color: #5a5a5a #1a1a1a #1a1a1a #5a5a5a;
+  height: 10px;
 }
 
 /* ===== SCANLINES EFFECT ===== */
@@ -258,6 +433,110 @@
     transparent 1px,
     transparent 2px
   );
+}
+
+/* ===== INPUT FIELDS - CLASSIC STYLE ===== */
+.winamp-input {
+  background: #000;
+  color: #00ff00;
+  border: 2px solid;
+  border-color: #0a0a0a #3a3a3a #3a3a3a #0a0a0a;
+  padding: 2px 4px;
+  font-size: 10px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  border-radius: 0;
+}
+
+.winamp-input::placeholder {
+  color: #006600;
+}
+
+.winamp-input:focus {
+  outline: none;
+  border-color: #003300 #00aa00 #00aa00 #003300;
+}
+
+/* ===== SELECT / DROPDOWN - CLASSIC STYLE ===== */
+.winamp-select {
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+  color: #00ff00;
+  border: 1px solid;
+  border-color: #4a4a4a #1a1a1a #1a1a1a #4a4a4a;
+  padding: 2px 4px;
+  font-size: 9px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.winamp-select option {
+  background: #2a2a2a;
+  color: #00ff00;
+}
+
+/* ===== CLUTTERBAR / PANELS ===== */
+.winamp-panel {
+  background: var(--winamp-bg-dark);
+  border: 1px solid;
+  border-color: #3a3a3a #1a1a1a #1a1a1a #3a3a3a;
+  padding: 2px;
+}
+
+/* ===== CLASSIC TEXT STYLES ===== */
+.winamp-text {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 10px;
+  color: #00ff00;
+}
+
+.winamp-text-dim {
+  color: #006600;
+}
+
+.winamp-text-bright {
+  color: #00ff00;
+  text-shadow: 0 0 4px #00ff00;
+}
+
+/* ===== EQUALIZER SPECIFIC ===== */
+.eq-slider-wrapper {
+  background: linear-gradient(90deg, 
+    rgba(0,0,0,0.3) 0%, 
+    transparent 20%, 
+    transparent 80%, 
+    rgba(0,0,0,0.3) 100%
+  );
+  padding: 2px;
+}
+
+.eq-graph {
+  background: #000;
+  border: 1px solid;
+  border-color: #000 #3a3a3a #3a3a3a #000;
+}
+
+/* ===== STEREO/MONO INDICATORS ===== */
+.indicator-led {
+  width: 8px;
+  height: 8px;
+  background: #003300;
+  border: 1px solid;
+  border-color: #001100 #005500 #005500 #001100;
+  border-radius: 0;
+}
+
+.indicator-led.active {
+  background: #00ff00;
+  box-shadow: 0 0 4px #00ff00;
+}
+
+/* ===== CLASSIC BITRATE/FREQUENCY DISPLAY ===== */
+.kbps-display {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 8px;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 3px #00ff00;
 }
 
 /* ===== GRADIENT RADIAL ===== */

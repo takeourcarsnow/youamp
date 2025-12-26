@@ -26,7 +26,7 @@ export function EqualizerWindow() {
 
   return (
     <WinampWindow
-      title="Equalizer"
+      title="EQUALIZER"
       position={equalizerWindow.position}
       onPositionChange={(pos) => setWindowPosition('equalizerWindow', pos)}
       onClose={() => toggleWindow('equalizerWindow')}
@@ -34,14 +34,12 @@ export function EqualizerWindow() {
     >
       <div className="equalizer-content">
         {/* Header with enable toggle and presets */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2 pb-2 border-b border-[#3a3a3a]">
           <button
             onClick={toggleEnabled}
             className={cn(
-              'px-2 py-1 text-xs rounded',
-              isEnabled
-                ? 'bg-[#00ff00]/20 text-[#00ff00]'
-                : 'bg-gray-600/50 text-gray-400'
+              'mode-button text-[7px] w-8',
+              isEnabled && 'mode-button-active'
             )}
           >
             {isEnabled ? 'ON' : 'OFF'}
@@ -53,7 +51,7 @@ export function EqualizerWindow() {
               const preset = EQUALIZER_PRESETS.find((p) => p.name === e.target.value);
               if (preset) applyPreset(preset);
             }}
-            className="bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30"
+            className="winamp-select text-[8px] w-[90px]"
           >
             <option value="" disabled>
               Presets
@@ -67,54 +65,75 @@ export function EqualizerWindow() {
 
           <button
             onClick={reset}
-            className="px-2 py-1 text-xs rounded bg-gray-600/50 text-gray-300 hover:bg-gray-500/50"
+            className="mode-button text-[7px] w-10"
           >
-            Reset
+            RESET
           </button>
         </div>
 
-        {/* EQ Bands */}
-        <div className="flex items-end gap-1">
-          {/* Preamp */}
-          <div className="flex flex-col items-center">
-            <WinampSlider
-              value={preampGain + 12}
-              min={0}
-              max={24}
-              onChange={(v) => setPreampGain(v - 12)}
-              orientation="vertical"
-              className="h-[80px]"
-              showFill={false}
-            />
-            <span className="text-[8px] text-[#00ff00] mt-1">PRE</span>
+        {/* EQ Graph Background */}
+        <div 
+          className="eq-graph relative mb-2 p-1"
+          style={{
+            background: '#000',
+            border: '1px solid',
+            borderColor: '#000 #3a3a3a #3a3a3a #000',
+          }}
+        >
+          {/* Grid lines */}
+          <div className="absolute inset-1 pointer-events-none">
+            {[0, 25, 50, 75, 100].map((y) => (
+              <div
+                key={y}
+                className="absolute w-full border-t border-[#1a3a1a]"
+                style={{ top: `${y}%` }}
+              />
+            ))}
           </div>
 
-          <div className="w-px h-[90px] bg-[#00ff00]/30 mx-1" />
-
-          {/* Frequency bands */}
-          {bands.map((gain, index) => (
-            <div key={index} className="flex flex-col items-center">
+          {/* EQ Bands */}
+          <div className="flex items-end justify-between relative z-10 h-[70px]">
+            {/* Preamp */}
+            <div className="flex flex-col items-center">
               <WinampSlider
-                value={gain + 12}
+                value={preampGain + 12}
                 min={0}
                 max={24}
-                onChange={(v) => setBandGain(index, v - 12)}
+                onChange={(v) => setPreampGain(v - 12)}
                 orientation="vertical"
-                className={cn('h-[80px]', !isEnabled && 'opacity-50')}
+                className="h-[60px]"
                 showFill={false}
               />
-              <span className="text-[8px] text-[#00ff00] mt-1">
-                {EQUALIZER_FREQUENCIES[index]}
-              </span>
+              <span className="text-[6px] text-[#00aa00] mt-0.5 font-bold">PRE</span>
             </div>
-          ))}
+
+            <div className="w-px h-[65px] bg-[#3a3a3a] mx-1" />
+
+            {/* Frequency bands */}
+            {bands.map((gain, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <WinampSlider
+                  value={gain + 12}
+                  min={0}
+                  max={24}
+                  onChange={(v) => setBandGain(index, v - 12)}
+                  orientation="vertical"
+                  className={cn('h-[60px]', !isEnabled && 'opacity-40')}
+                  showFill={false}
+                />
+                <span className="text-[6px] text-[#00aa00] mt-0.5 font-bold">
+                  {EQUALIZER_FREQUENCIES[index]}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Scale indicators */}
-        <div className="flex justify-between mt-2 px-2">
-          <span className="text-[8px] text-[#00ff00]/60">+12dB</span>
-          <span className="text-[8px] text-[#00ff00]/60">0dB</span>
-          <span className="text-[8px] text-[#00ff00]/60">-12dB</span>
+        <div className="flex justify-between px-1">
+          <span className="text-[7px] text-[#00aa00] font-bold">+12dB</span>
+          <span className="text-[7px] text-[#00aa00] font-bold">0dB</span>
+          <span className="text-[7px] text-[#00aa00] font-bold">-12dB</span>
         </div>
       </div>
     </WinampWindow>

@@ -20,7 +20,7 @@ const MODES: VisualizationMode[] = ['bars', 'wave', 'spectrum', 'oscilloscope', 
 export function EnhancedVisualization({
   isPlaying,
   className,
-  barCount = 32,
+  barCount = 20,
   mode = 'bars',
   onModeChange,
 }: EnhancedVisualizationProps) {
@@ -51,16 +51,10 @@ export function EnhancedVisualization({
   // Animation loop
   useEffect(() => {
     if (!isPlaying) {
-      setData(Array(barCount).fill(3));
+      setData(Array(barCount).fill(2));
       return;
     }
 
-    const animate = () => {
-      setData(generateData());
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    // Use interval for smoother updates
     const intervalId = setInterval(() => {
       setData(prev => {
         const newData = generateData();
@@ -88,17 +82,16 @@ export function EnhancedVisualization({
     const height = canvas.height;
 
     ctx.clearRect(0, 0, width, height);
+    ctx.imageSmoothingEnabled = false;
 
     if (mode === 'wave') {
       ctx.beginPath();
       ctx.strokeStyle = '#00ff00';
-      ctx.lineWidth = 2;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = '#00ff00';
+      ctx.lineWidth = 1;
 
       data.forEach((value, i) => {
         const x = (i / data.length) * width;
-        const y = height / 2 + Math.sin(phaseRef.current + i * 0.2) * (value / 100) * (height / 2 - 5);
+        const y = height / 2 + Math.sin(phaseRef.current + i * 0.2) * (value / 100) * (height / 2 - 2);
         
         if (i === 0) {
           ctx.moveTo(x, y);
@@ -111,14 +104,12 @@ export function EnhancedVisualization({
     } else if (mode === 'oscilloscope') {
       ctx.beginPath();
       ctx.strokeStyle = '#00ff00';
-      ctx.lineWidth = 1.5;
-      ctx.shadowBlur = 5;
-      ctx.shadowColor = '#00ff00';
+      ctx.lineWidth = 1;
 
       for (let i = 0; i < width; i++) {
         const dataIndex = Math.floor((i / width) * data.length);
         const value = data[dataIndex] || 0;
-        const y = height / 2 + Math.sin(phaseRef.current * 3 + i * 0.05) * (value / 100) * (height / 2);
+        const y = height / 2 + Math.sin(phaseRef.current * 3 + i * 0.08) * (value / 100) * (height / 2);
         
         if (i === 0) {
           ctx.moveTo(i, y);
@@ -135,49 +126,37 @@ export function EnhancedVisualization({
 
       data.forEach((value, i) => {
         const angle = (i / data.length) * Math.PI * 2 - Math.PI / 2;
-        const barLength = (value / 100) * radius * 0.8;
+        const barLength = (value / 100) * radius * 0.7;
         
         const x1 = centerX + Math.cos(angle) * radius * 0.3;
         const y1 = centerY + Math.sin(angle) * radius * 0.3;
         const x2 = centerX + Math.cos(angle) * (radius * 0.3 + barLength);
         const y2 = centerY + Math.sin(angle) * (radius * 0.3 + barLength);
 
-        const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
-        gradient.addColorStop(0, '#00ff00');
-        gradient.addColorStop(0.6, '#aaff00');
-        gradient.addColorStop(1, '#ff0000');
-
+        const intensity = value / 100;
+        ctx.strokeStyle = intensity > 0.7 ? '#ff0000' : intensity > 0.4 ? '#ffff00' : '#00ff00';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 3;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = '#00ff00';
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
       });
     } else if (mode === 'spectrum') {
-      const barWidth = width / data.length;
+      const barWidth = Math.floor(width / data.length);
       
       data.forEach((value, i) => {
-        const barHeight = (value / 100) * height;
+        const barHeight = Math.floor((value / 100) * height);
         const x = i * barWidth;
         const y = height - barHeight;
 
-        // Create gradient
+        // Classic spectrum gradient
         const gradient = ctx.createLinearGradient(x, height, x, y);
         gradient.addColorStop(0, '#00ff00');
-        gradient.addColorStop(0.5, '#aaff00');
+        gradient.addColorStop(0.6, '#ffff00');
         gradient.addColorStop(1, '#ff0000');
 
         ctx.fillStyle = gradient;
-        ctx.shadowBlur = 3;
-        ctx.shadowColor = '#00ff00';
         ctx.fillRect(x, y, barWidth - 1, barHeight);
-
-        // Peak indicator
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(x, y - 2, barWidth - 1, 2);
       });
     }
   }, [data, mode]);
@@ -190,21 +169,49 @@ export function EnhancedVisualization({
     }
   };
 
-  // Bars mode uses divs
+  // Classic Winamp bars mode uses divs with pixel-perfect styling
   if (mode === 'bars') {
     return (
       <div 
-        className={cn('visualization flex items-end gap-[1px] h-[40px] cursor-pointer', className)}
+        className={cn(
+          'visualization flex items-end gap-px h-[38px] cursor-pointer bg-black p-[2px]',
+          className
+        )}
         onClick={handleClick}
         title="Click to change visualization mode"
+        style={{
+          border: '1px solid',
+          borderColor: '#000 #3a3a3a #3a3a3a #000',
+        }}
       >
-        {data.map((height, index) => (
-          <div
-            key={index}
-            className="visualization-bar flex-1 bg-gradient-to-t from-[#00ff00] via-[#aaff00] to-[#ff0000] transition-all duration-75"
-            style={{ height: `${Math.max(3, height)}%` }}
-          />
-        ))}
+        {data.map((height, index) => {
+          const normalizedHeight = Math.max(2, height);
+          const segments = Math.floor(normalizedHeight / 8);
+          
+          return (
+            <div
+              key={index}
+              className="flex-1 flex flex-col-reverse gap-px"
+              style={{ height: '100%' }}
+            >
+              {Array.from({ length: Math.min(segments, 12) }).map((_, segIndex) => {
+                const isTop = segIndex >= 10;
+                const isMid = segIndex >= 6;
+                return (
+                  <div
+                    key={segIndex}
+                    className="w-full"
+                    style={{
+                      height: '2px',
+                      backgroundColor: isTop ? '#ff0000' : isMid ? '#ffff00' : '#00ff00',
+                      boxShadow: isTop ? '0 0 2px #ff0000' : isMid ? '0 0 2px #ffff00' : '0 0 2px #00ff00',
+                    }}
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     );
   }
@@ -213,11 +220,16 @@ export function EnhancedVisualization({
   return (
     <canvas
       ref={canvasRef}
-      width={200}
-      height={40}
-      className={cn('visualization cursor-pointer bg-black rounded', className)}
+      width={180}
+      height={38}
+      className={cn('cursor-pointer bg-black', className)}
       onClick={handleClick}
       title="Click to change visualization mode"
+      style={{
+        border: '1px solid',
+        borderColor: '#000 #3a3a3a #3a3a3a #000',
+        imageRendering: 'pixelated',
+      }}
     />
   );
 }

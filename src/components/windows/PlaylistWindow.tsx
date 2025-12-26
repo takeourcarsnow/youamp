@@ -72,41 +72,32 @@ function SortableTrackItem({
       onDoubleClick={onDoubleClick}
       onContextMenu={onContextMenu}
       className={cn(
-        'playlist-track flex items-center gap-2 px-2 py-1 cursor-grab',
-        'hover:bg-[#00ff00]/10 transition-colors',
-        isCurrentTrack && 'bg-[#00ff00]/20 text-[#00ff00]',
-        isSelected && 'bg-[#00ff00]/15',
+        'playlist-track flex items-center gap-1 px-1 py-0.5 cursor-grab select-none',
+        'hover:bg-[#00ff00]/5 transition-none',
+        isCurrentTrack && 'bg-[#00ff00]/10 text-[#00ff00]',
+        isSelected && !isCurrentTrack && 'bg-[#00ff00]/5',
         isDragging && 'cursor-grabbing'
       )}
     >
       {/* Track number */}
-      <span className="text-[10px] text-gray-500 w-5 text-right">
+      <span className="text-[9px] text-[#00aa00] w-4 text-right font-mono">
         {index + 1}.
       </span>
 
       {/* Track info */}
       <div className="flex-1 min-w-0">
-        <div className="text-xs truncate">
+        <div className={cn(
+          "text-[9px] truncate font-mono",
+          isCurrentTrack ? "text-[#00ff00]" : "text-[#00aa00]"
+        )}>
           {track.artist} - {track.title}
         </div>
       </div>
 
       {/* Duration */}
-      <span className="text-[10px] text-gray-400">
+      <span className="text-[9px] text-[#008800] font-mono">
         {formatDuration(track.duration)}
       </span>
-
-      {/* Remove button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove();
-        }}
-        className="text-gray-500 hover:text-[#ff0000] text-xs px-1"
-        title="Remove"
-      >
-        ×
-      </button>
     </div>
   );
 }
@@ -202,62 +193,89 @@ export function PlaylistWindow() {
 
   return (
     <WinampWindow
-      title={`Playlist (${queue.length} tracks)`}
+      title="PLAYLIST"
       position={playlistWindow.position}
       onPositionChange={(pos) => setWindowPosition('playlistWindow', pos)}
       onClose={() => toggleWindow('playlistWindow')}
       width={275}
     >
       <div className="playlist-content">
-        {/* Playlist header */}
-        <div className="flex items-center justify-between mb-2 text-xs">
-          <span className="text-[#00ff00]">
-            {queue.length} track{queue.length !== 1 ? 's' : ''} •{' '}
-            {formatDuration(totalDuration)}
-          </span>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowSaveDialog(true)}
-              className="text-[#00ff00] hover:text-[#00ff00]/80 px-2 py-0.5"
-              disabled={queue.length === 0}
-              title="Save as playlist"
-            >
-              💾
-            </button>
-            <button
-              onClick={handleClearQueue}
-              className="text-[#ff6666] hover:text-[#ff0000] px-2 py-0.5"
-              disabled={queue.length === 0}
-            >
-              Clear
-            </button>
+        {/* Track list area with classic inset border */}
+        <div 
+          className="mb-1"
+          style={{
+            background: '#000',
+            border: '2px solid',
+            borderColor: '#0a0a0a #3a3a3a #3a3a3a #0a0a0a',
+          }}
+        >
+          <div className="playlist-tracks max-h-[180px] overflow-y-auto scrollbar-thin">
+            {queue.length === 0 ? (
+              <div className="text-center py-6 text-[#006600] text-[9px] font-mono">
+                No tracks in playlist
+                <br />
+                <span className="text-[8px]">Add tracks from the browser</span>
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={queue.map((t) => t.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {queue.map((track, index) => (
+                    <SortableTrackItem
+                      key={track.id}
+                      track={track}
+                      index={index}
+                      isCurrentTrack={currentTrack?.id === track.id}
+                      isSelected={selectedIndex === index}
+                      onSelect={() => setSelectedIndex(index)}
+                      onDoubleClick={() => handleTrackDoubleClick(track)}
+                      onRemove={() => handleRemoveTrack(track)}
+                      onContextMenu={(e) => openContextMenu(e, getTrackContextMenuItems(track, index))}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            )}
           </div>
+        </div>
+
+        {/* Status bar */}
+        <div className="flex items-center justify-between px-1 py-0.5 border-t border-[#3a3a3a]">
+          <span className="text-[8px] text-[#00aa00] font-mono">
+            {queue.length} track{queue.length !== 1 ? 's' : ''} / {formatDuration(totalDuration)}
+          </span>
         </div>
 
         {/* Save dialog */}
         {showSaveDialog && (
-          <div className="mb-2 p-2 bg-black/30 rounded">
-            <div className="text-xs text-[#00ff00] mb-1">Save as playlist:</div>
-            <div className="flex gap-2">
+          <div className="mt-1 p-1 border border-[#3a3a3a]" style={{ background: '#1a1a1a' }}>
+            <div className="text-[8px] text-[#00ff00] mb-1 font-mono">SAVE AS:</div>
+            <div className="flex gap-1">
               <input
                 type="text"
                 value={newPlaylistName}
                 onChange={(e) => setNewPlaylistName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSaveToPlaylist()}
                 placeholder="Playlist name..."
-                className="flex-1 bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30 placeholder:text-[#00ff00]/50"
+                className="winamp-input flex-1 text-[9px]"
                 autoFocus
               />
               <button
                 onClick={handleSaveToPlaylist}
                 disabled={!newPlaylistName.trim()}
-                className="px-2 py-1 text-xs bg-[#00ff00]/20 hover:bg-[#00ff00]/30 text-[#00ff00] rounded disabled:opacity-50"
+                className="playlist-control-btn text-[8px]"
               >
-                Save
+                OK
               </button>
               <button
                 onClick={() => setShowSaveDialog(false)}
-                className="px-2 py-1 text-xs text-gray-400 hover:text-white"
+                className="playlist-control-btn text-[8px]"
               >
                 ✕
               </button>
@@ -265,82 +283,68 @@ export function PlaylistWindow() {
           </div>
         )}
 
-        {/* Track list */}
-        <div className="playlist-tracks max-h-[200px] overflow-y-auto scrollbar-thin">
-          {queue.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 text-sm">
-              No tracks in playlist
-              <br />
-              <span className="text-xs">Add tracks from the browser</span>
-            </div>
-          ) : (
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={queue.map((t) => t.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {queue.map((track, index) => (
-                  <SortableTrackItem
-                    key={track.id}
-                    track={track}
-                    index={index}
-                    isCurrentTrack={currentTrack?.id === track.id}
-                    isSelected={selectedIndex === index}
-                    onSelect={() => setSelectedIndex(index)}
-                    onDoubleClick={() => handleTrackDoubleClick(track)}
-                    onRemove={() => handleRemoveTrack(track)}
-                    onContextMenu={(e) => openContextMenu(e, getTrackContextMenuItems(track, index))}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          )}
-        </div>
-
         {/* Playlist controls */}
-        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-[#00ff00]/20">
+        <div className="flex items-center justify-between mt-1 pt-1 border-t border-[#3a3a3a]">
+          <div className="flex gap-px">
+            <button
+              onClick={() => setShowSaveDialog(true)}
+              disabled={queue.length === 0}
+              className="playlist-control-btn text-[8px]"
+              title="Save as playlist"
+            >
+              +LIST
+            </button>
+            <button
+              onClick={() => {
+                if (selectedIndex !== null) {
+                  handleRemoveTrack(queue[selectedIndex]);
+                  setSelectedIndex(null);
+                }
+              }}
+              disabled={selectedIndex === null}
+              className="playlist-control-btn text-[8px]"
+              title="Remove Selected"
+            >
+              -FILE
+            </button>
+          </div>
+          
+          <div className="flex gap-px">
+            <button
+              onClick={() => {
+                if (selectedIndex !== null && selectedIndex > 0) {
+                  reorderQueue(selectedIndex, selectedIndex - 1);
+                  setSelectedIndex(selectedIndex - 1);
+                }
+              }}
+              disabled={selectedIndex === null || selectedIndex === 0}
+              className="playlist-control-btn text-[8px]"
+              title="Move Up"
+            >
+              ▲
+            </button>
+            <button
+              onClick={() => {
+                if (selectedIndex !== null && selectedIndex < queue.length - 1) {
+                  reorderQueue(selectedIndex, selectedIndex + 1);
+                  setSelectedIndex(selectedIndex + 1);
+                }
+              }}
+              disabled={selectedIndex === null || selectedIndex === queue.length - 1}
+              className="playlist-control-btn text-[8px]"
+              title="Move Down"
+            >
+              ▼
+            </button>
+          </div>
+
           <button
-            onClick={() => {
-              if (selectedIndex !== null && selectedIndex > 0) {
-                reorderQueue(selectedIndex, selectedIndex - 1);
-                setSelectedIndex(selectedIndex - 1);
-              }
-            }}
-            disabled={selectedIndex === null || selectedIndex === 0}
-            className="playlist-control-btn"
-            title="Move Up"
+            onClick={handleClearQueue}
+            className="playlist-control-btn text-[8px] text-[#ff6666]"
+            disabled={queue.length === 0}
+            title="Clear playlist"
           >
-            ↑
-          </button>
-          <button
-            onClick={() => {
-              if (selectedIndex !== null && selectedIndex < queue.length - 1) {
-                reorderQueue(selectedIndex, selectedIndex + 1);
-                setSelectedIndex(selectedIndex + 1);
-              }
-            }}
-            disabled={selectedIndex === null || selectedIndex === queue.length - 1}
-            className="playlist-control-btn"
-            title="Move Down"
-          >
-            ↓
-          </button>
-          <button
-            onClick={() => {
-              if (selectedIndex !== null) {
-                handleRemoveTrack(queue[selectedIndex]);
-                setSelectedIndex(null);
-              }
-            }}
-            disabled={selectedIndex === null}
-            className="playlist-control-btn text-[#ff6666] hover:text-[#ff0000]"
-            title="Remove Selected"
-          >
-            Del
+            CLEAR
           </button>
         </div>
       </div>

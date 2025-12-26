@@ -26,7 +26,7 @@ export function MainWindow() {
 
   return (
     <WinampWindow
-      title="YouAmp"
+      title="YOUAMP"
       position={mainWindow.position}
       onPositionChange={(pos) => setWindowPosition('mainWindow', pos)}
       onClose={() => toggleWindow('mainWindow')}
@@ -35,91 +35,94 @@ export function MainWindow() {
         <>
           <button
             onClick={toggleMiniPlayer}
-            className="winamp-button w-[9px] h-[9px] mr-1"
+            className="winamp-button w-[9px] h-[9px] mr-0.5"
             title="Mini player mode"
           >
-            <span className="text-[8px] leading-none">▪</span>
+            <span className="text-[6px] leading-none">_</span>
           </button>
           <button
             onClick={toggleTheme}
-            className="winamp-button w-[9px] h-[9px] mr-1"
+            className="winamp-button w-[9px] h-[9px] mr-0.5"
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           >
-            <span className="text-[8px] leading-none">
-              {theme === 'dark' ? '☀' : '☾'}
-            </span>
+            <span className="text-[6px] leading-none">◐</span>
           </button>
         </>
       }
     >
       <div className="main-window-content">
-        {/* Top section: Time and Visualization */}
-        <div className="flex items-start gap-2 mb-2">
-          {/* Time Display */}
-          <div 
-            className="cursor-pointer" 
-            onClick={() => setShowRemaining(!showRemaining)}
-            title="Click to toggle elapsed/remaining"
-          >
-            <TimeDisplay showRemaining={showRemaining} />
+        {/* Classic Winamp Display Area */}
+        <div className="winamp-display mb-1">
+          <div className="flex gap-1">
+            {/* Left side: Time Display and indicators */}
+            <div className="flex flex-col">
+              {/* Time Display */}
+              <div 
+                className="cursor-pointer select-none" 
+                onClick={() => setShowRemaining(!showRemaining)}
+                title="Click to toggle elapsed/remaining"
+              >
+                <TimeDisplay showRemaining={showRemaining} />
+              </div>
+              
+              {/* Status indicators */}
+              <div className="flex items-center gap-1 mt-1">
+                <div className={cn(
+                  "indicator-led",
+                  isPlaying && "active"
+                )} title="Playing" />
+                <span className="text-[7px] text-[#00aa00] uppercase font-bold">
+                  {isPlaying ? 'Play' : 'Stop'}
+                </span>
+              </div>
+            </div>
+
+            {/* Right side: Visualization */}
+            <div className="flex-1">
+              <EnhancedVisualization 
+                isPlaying={isPlaying} 
+                barCount={20}
+                mode={visualizationMode}
+                onModeChange={(mode: VisualizationMode) => setVisualizationMode(mode)}
+              />
+            </div>
           </div>
-
-          {/* Enhanced Visualization */}
-          <div className="flex-1 bg-black/50 rounded overflow-hidden">
-            <EnhancedVisualization 
-              isPlaying={isPlaying} 
-              barCount={19}
-              mode={visualizationMode}
-              onModeChange={(mode: VisualizationMode) => setVisualizationMode(mode)}
-            />
+          
+          {/* Track Info Marquee */}
+          <div className="mt-1 border-t border-[#1a1a1a] pt-1">
+            <TrackInfo />
           </div>
-        </div>
-
-        {/* Track Info */}
-        <div className="mb-2 px-1 py-1 bg-black/30 rounded">
-          <TrackInfo />
-        </div>
-
-        {/* Bitrate display */}
-        <div className="mb-2">
-          <BitrateDisplay />
+          
+          {/* Bitrate/Frequency Display */}
+          <div className="flex items-center justify-between mt-1">
+            <BitrateDisplay />
+            <div className="flex gap-2">
+              <div className="flex items-center gap-0.5">
+                <div className="indicator-led active" />
+                <span className="kbps-display">Stereo</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Seek Bar */}
-        <div className="mb-2">
+        <div className="mb-1 px-1">
           <SeekBar />
         </div>
 
-        {/* Bottom Controls */}
-        <div className="flex items-center justify-between">
+        {/* Bottom Controls Row */}
+        <div className="flex items-center justify-between px-1 py-1">
           {/* Transport Controls */}
           <TransportControls />
 
           {/* Playback Modes */}
-          <PlaybackModes />
+          <div className="flex items-center gap-0.5">
+            <PlaybackModes />
+          </div>
 
-          {/* Volume */}
+          {/* Volume & Balance */}
           <VolumeControl />
         </div>
-
-        {/* Current Track Thumbnail (small) */}
-        {currentTrack && (
-          <div className="mt-2 flex items-center gap-2 p-1 bg-black/20 rounded">
-            <img
-              src={currentTrack.thumbnail}
-              alt={currentTrack.title}
-              className="w-10 h-10 rounded object-cover"
-            />
-            <div className="flex-1 min-w-0">
-              <div className="text-xs text-[#00ff00] truncate">
-                {currentTrack.title}
-              </div>
-              <div className="text-xs text-[#00aa00] truncate">
-                {currentTrack.artist}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </WinampWindow>
   );

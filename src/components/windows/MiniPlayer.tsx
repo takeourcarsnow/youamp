@@ -25,78 +25,82 @@ export function MiniPlayer() {
   return (
     <div
       className={cn(
-        'mini-player fixed z-[100] rounded-sm overflow-hidden',
+        'mini-player fixed z-[100] overflow-hidden',
         theme === 'light' && 'light-theme'
       )}
       style={{
         left: position.x,
         top: position.y,
-        background: 'linear-gradient(180deg, #2a2a40 0%, #1a1a2e 100%)',
-        border: '1px solid #3a3a5a',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 0, 0.1)',
-        width: 320,
+        background: '#232323',
+        border: '2px solid',
+        borderColor: '#4a4a4a #0a0a0a #0a0a0a #4a4a4a',
+        boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.8)',
+        width: 280,
       }}
     >
-      {/* Title bar */}
+      {/* Title bar - Classic Winamp style */}
       <div
-        className="flex items-center justify-between px-2 py-1 cursor-move select-none"
+        className="flex items-center justify-between px-1 py-0.5 cursor-move select-none"
         style={{
-          background: 'linear-gradient(180deg, #3a3a5a 0%, #2a2a40 100%)',
-          borderBottom: '1px solid #1a1a2e',
+          background: 'linear-gradient(180deg, #4a6a4a 0%, #2a4a2a 30%, #1a3a1a 70%, #0a2a0a 100%)',
+          borderBottom: '1px solid #000',
         }}
         onMouseDown={handleMouseDown}
       >
-        <span className="text-[10px] text-[#00ff00] font-bold">YouAmp Mini</span>
+        <div className="flex items-center gap-1">
+          <div className="flex gap-px">
+            <div className="w-[2px] h-[7px] bg-gradient-to-b from-[#7a9a7a] to-[#2a4a2a]" />
+            <div className="w-[2px] h-[7px] bg-gradient-to-b from-[#7a9a7a] to-[#2a4a2a]" />
+          </div>
+          <span className="text-[8px] text-white font-bold ml-0.5" style={{ textShadow: '1px 1px 0 #000' }}>
+            YOUAMP MINI
+          </span>
+        </div>
         <button
           onClick={toggleMiniPlayer}
-          className="text-[#00ff00] hover:text-white text-xs px-1"
+          className="winamp-button w-[9px] h-[9px]"
           title="Expand to full mode"
         >
-          ⬜
+          <span className="text-[6px] leading-none">□</span>
         </button>
       </div>
 
       {/* Progress bar */}
-      <div className="h-1 bg-black/50">
+      <div 
+        className="h-[3px]" 
+        style={{ 
+          background: '#000',
+          borderBottom: '1px solid #3a3a3a'
+        }}
+      >
         <div 
-          className="h-full bg-gradient-to-r from-[#00aa00] to-[#00ff00]"
-          style={{ width: `${progress}%` }}
+          className="h-full"
+          style={{ 
+            width: `${progress}%`,
+            background: 'linear-gradient(90deg, #006600 0%, #00aa00 50%, #00ff00 100%)'
+          }}
         />
       </div>
 
       {/* Content */}
-      <div className="flex items-center gap-2 p-2">
-        {/* Thumbnail */}
-        {currentTrack && (
-          <img
-            src={currentTrack.thumbnail}
-            alt={currentTrack.title}
-            className="w-10 h-10 rounded object-cover"
-          />
-        )}
-
+      <div className="flex items-center gap-1 p-1" style={{ background: '#232323' }}>
         {/* Track info */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 px-1">
           {currentTrack ? (
-            <>
-              <MarqueeText 
-                text={currentTrack.title}
-                className="text-xs text-[#00ff00]"
-                speed={30}
-              />
-              <div className="text-[10px] text-[#00aa00] truncate">
-                {currentTrack.artist}
-              </div>
-            </>
+            <MarqueeText 
+              text={`${currentTrack.artist} - ${currentTrack.title}`.toUpperCase()}
+              className="text-[9px] text-[#00ff00] font-mono font-bold"
+              style={{ textShadow: '0 0 4px #00ff00' }}
+              speed={100}
+              maxLength={30}
+            />
           ) : (
-            <div className="text-xs text-gray-500">No track playing</div>
+            <div className="text-[9px] text-[#006600] font-mono">*** STOPPED ***</div>
           )}
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-1">
-          <TransportControls compact />
-        </div>
+        <TransportControls compact />
       </div>
     </div>
   );

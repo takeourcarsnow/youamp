@@ -3,7 +3,7 @@
 @import "../styles/light-theme.css";
 
 :root {
-  --background: #0f0f1a;
+  --background: #1a1a1a;
   --foreground: #00ff00;
   --accent-color: #00ff00;
 }
@@ -29,11 +29,19 @@ body {
 }
 
 body {
-  background: var(--background);
+  background: #1a1a1a;
   color: var(--foreground);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Classic desktop pattern */
+  background-image: 
+    linear-gradient(45deg, #1f1f1f 25%, transparent 25%),
+    linear-gradient(-45deg, #1f1f1f 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1f1f1f 75%),
+    linear-gradient(-45deg, transparent 75%, #1f1f1f 75%);
+  background-size: 4px 4px;
+  background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
 }
 
 /* Dynamic accent color */
@@ -61,8 +69,8 @@ body {
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
+  outline: 1px solid var(--accent-color);
+  outline-offset: 1px;
 }
 
 /* Hide YouTube iframe */
@@ -72,6 +80,12 @@ iframe[src*="youtube.com"] {
   height: 1px !important;
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* Classic pixel font rendering */
+.pixel-font {
+  font-smooth: never;
+  -webkit-font-smoothing: none;
 }
 
 /* Animations */

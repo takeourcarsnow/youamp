@@ -145,64 +145,73 @@ export function BrowserWindow() {
 
   return (
     <WinampWindow
-      title="Music Browser"
+      title="MEDIA LIBRARY"
       position={browserWindow.position}
       onPositionChange={(pos) => setWindowPosition('browserWindow', pos)}
       onClose={() => toggleWindow('browserWindow')}
-      width={350}
+      width={320}
     >
       <div className="browser-content">
-        {/* Tabs */}
-        <div className="flex border-b border-[#00ff00]/30 mb-2">
+        {/* Tabs - Classic Winamp style */}
+        <div className="flex border-b border-[#3a3a3a] mb-1">
           {(['all', 'genre', 'artist', 'search', 'youtube'] as BrowserTab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                'px-3 py-1 text-xs capitalize transition-colors',
+                'px-2 py-0.5 text-[8px] uppercase font-bold transition-none',
                 activeTab === tab
-                  ? 'text-[#00ff00] border-b-2 border-[#00ff00]'
-                  : 'text-gray-400 hover:text-[#00ff00]'
+                  ? 'text-[#00ff00] bg-[#1a1a1a] border-t border-l border-r border-[#3a3a3a]'
+                  : 'text-[#666] hover:text-[#00aa00]'
               )}
+              style={{
+                marginBottom: activeTab === tab ? '-1px' : 0,
+              }}
             >
-              {tab === 'youtube' ? 'YouTube' : tab}
+              {tab === 'youtube' ? 'YT' : tab}
             </button>
           ))}
         </div>
 
         {/* Quick Actions */}
         {activeTab !== 'youtube' && (
-          <div className="flex gap-2 mb-2">
+          <div className="flex gap-px mb-1">
             <button
               onClick={handlePlayRandom}
-              className="flex-1 py-1 text-xs bg-[#00ff00]/10 hover:bg-[#00ff00]/20 text-[#00ff00] rounded transition-colors"
+              className="playlist-control-btn flex-1 text-[8px]"
             >
-              🎲 Random 10
+              🎲 RND 10
             </button>
             <button
               onClick={handleShuffleAll}
-              className="flex-1 py-1 text-xs bg-[#00ff00]/10 hover:bg-[#00ff00]/20 text-[#00ff00] rounded transition-colors"
+              className="playlist-control-btn flex-1 text-[8px]"
             >
-              🔀 Shuffle All
+              🔀 SHUFFLE
             </button>
           </div>
         )}
 
         {/* Tab Content */}
-        <div className="mb-2">
+        <div className="mb-1">
           {/* Genre selector */}
           {activeTab === 'genre' && (
-            <div className="flex flex-wrap gap-1 mb-2">
+            <div className="flex flex-wrap gap-px mb-1">
               {GENRES.map((genre) => (
                 <button
                   key={genre}
                   onClick={() => setSelectedGenre(genre)}
                   className={cn(
-                    'px-2 py-0.5 text-[10px] rounded capitalize transition-colors',
+                    'px-1.5 py-0.5 text-[7px] uppercase font-bold transition-none',
                     selectedGenre === genre
                       ? 'bg-[#00ff00] text-black'
-                      : 'bg-[#00ff00]/10 text-[#00ff00] hover:bg-[#00ff00]/20'
+                      : 'bg-[#2a2a2a] text-[#00aa00] hover:bg-[#3a3a3a]'
                   )}
+                  style={{
+                    border: '1px solid',
+                    borderColor: selectedGenre === genre 
+                      ? '#00ff00 #003300 #003300 #00ff00'
+                      : '#4a4a4a #1a1a1a #1a1a1a #4a4a4a',
+                  }}
                 >
                   {genre}
                 </button>
@@ -215,9 +224,9 @@ export function BrowserWindow() {
             <select
               value={selectedArtist || ''}
               onChange={(e) => setSelectedArtist(e.target.value || null)}
-              className="w-full bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30 mb-2"
+              className="winamp-select w-full text-[9px] mb-1"
             >
-              <option value="">Select an artist...</option>
+              <option value="">Select artist...</option>
               {artists.map((artist) => (
                 <option key={artist} value={artist}>
                   {artist}
@@ -233,25 +242,26 @@ export function BrowserWindow() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search tracks..."
-              className="w-full bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30 mb-2 placeholder:text-[#00ff00]/50"
+              className="winamp-input w-full text-[9px] mb-1"
             />
           )}
 
           {/* YouTube search */}
           {activeTab === 'youtube' && (
-            <div className="flex gap-2 mb-2">
+            <div className="flex gap-1 mb-1">
               <input
                 type="text"
                 value={youtubeQuery}
                 onChange={(e) => setYoutubeQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleYouTubeSearch()}
                 placeholder="Search YouTube..."
-                className="flex-1 bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30 placeholder:text-[#00ff00]/50"
+                className="winamp-input flex-1 text-[9px]"
               />
               <button
                 onClick={handleYouTubeSearch}
                 disabled={isSearching || !youtubeQuery.trim()}
-                className="px-3 py-1 text-xs bg-[#ff0000]/80 hover:bg-[#ff0000] text-white rounded disabled:opacity-50"
+                className="playlist-control-btn text-[8px] px-2"
+                style={{ background: '#990000', borderColor: '#cc0000 #660000 #660000 #cc0000' }}
               >
                 {isSearching ? '...' : '🔍'}
               </button>
@@ -261,27 +271,34 @@ export function BrowserWindow() {
 
         {/* Results header */}
         {displayedTracks.length > 0 && (
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] text-gray-400">
-              {displayedTracks.length} track{displayedTracks.length !== 1 ? 's' : ''}
+          <div className="flex items-center justify-between mb-0.5 px-1">
+            <span className="text-[7px] text-[#666] font-mono">
+              {displayedTracks.length} TRACK{displayedTracks.length !== 1 ? 'S' : ''}
             </span>
             <button
               onClick={handleAddAll}
-              className="text-[10px] text-[#00ff00] hover:underline"
+              className="text-[7px] text-[#00aa00] hover:text-[#00ff00] font-bold"
             >
-              + Add All
+              +ADD ALL
             </button>
           </div>
         )}
 
         {/* Track list */}
-        <div className="browser-tracks max-h-[250px] overflow-y-auto scrollbar-thin">
+        <div 
+          className="browser-tracks max-h-[200px] overflow-y-auto scrollbar-thin"
+          style={{
+            background: '#000',
+            border: '2px solid',
+            borderColor: '#0a0a0a #3a3a3a #3a3a3a #0a0a0a',
+          }}
+        >
           {displayedTracks.length === 0 ? (
-            <div className="text-center py-4 text-gray-500 text-xs">
+            <div className="text-center py-4 text-[#006600] text-[9px] font-mono">
               {activeTab === 'youtube' && !youtubeResults.length
-                ? isSearching ? 'Searching...' : 'Search YouTube for music'
+                ? isSearching ? 'Searching...' : 'Search YouTube'
                 : activeTab === 'search' && !debouncedSearch.trim()
-                ? 'Enter a search term'
+                ? 'Enter search term'
                 : activeTab === 'genre' && !selectedGenre
                 ? 'Select a genre'
                 : activeTab === 'artist' && !selectedArtist
@@ -295,52 +312,42 @@ export function BrowserWindow() {
                 <div
                   key={track.id}
                   className={cn(
-                    'browser-track flex items-center gap-2 px-2 py-1.5',
-                    'hover:bg-[#00ff00]/10 transition-colors group'
+                    'browser-track flex items-center gap-1 px-1 py-0.5',
+                    'hover:bg-[#00ff00]/5 transition-none group cursor-pointer'
                   )}
+                  onDoubleClick={() => handlePlayTrack(track)}
                   onContextMenu={(e) => openContextMenu(e, getTrackContextMenuItems(track))}
                 >
-                  {/* Thumbnail */}
-                  <img
-                    src={track.thumbnail}
-                    alt={track.title}
-                    className="w-8 h-8 rounded object-cover"
-                    loading="lazy"
-                  />
-
                   {/* Track info */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-[#00ff00] truncate">
-                      {track.title}
-                    </div>
-                    <div className="text-[10px] text-gray-400 truncate">
-                      {track.artist} {track.genre !== 'other' && `• ${track.genre}`}
+                    <div className="text-[9px] text-[#00aa00] truncate font-mono">
+                      {track.artist} - {track.title}
                     </div>
                   </div>
 
                   {/* Duration */}
-                  <span className="text-[10px] text-gray-500">
+                  <span className="text-[8px] text-[#006600] font-mono">
                     {track.duration > 0 ? formatDuration(track.duration) : '--:--'}
                   </span>
 
                   {/* Actions */}
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-px opacity-0 group-hover:opacity-100 transition-none">
                     <button
-                      onClick={() => handlePlayTrack(track)}
-                      className="p-1 text-[#00ff00] hover:bg-[#00ff00]/20 rounded"
+                      onClick={(e) => { e.stopPropagation(); handlePlayTrack(track); }}
+                      className="p-0.5 text-[#00ff00] hover:bg-[#00ff00]/10 text-[10px]"
                       title="Play"
                     >
                       ▶
                     </button>
                     <button
-                      onClick={() => handleAddTrack(track)}
+                      onClick={(e) => { e.stopPropagation(); handleAddTrack(track); }}
                       className={cn(
-                        'p-1 rounded',
+                        'p-0.5 text-[10px]',
                         isInQueue
-                          ? 'text-gray-500 cursor-not-allowed'
-                          : 'text-[#00ff00] hover:bg-[#00ff00]/20'
+                          ? 'text-[#333] cursor-not-allowed'
+                          : 'text-[#00ff00] hover:bg-[#00ff00]/10'
                       )}
-                      title={isInQueue ? 'Already in playlist' : 'Add to playlist'}
+                      title={isInQueue ? 'In playlist' : 'Add'}
                       disabled={!!isInQueue}
                     >
                       +

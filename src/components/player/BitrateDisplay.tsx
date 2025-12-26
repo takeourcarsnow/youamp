@@ -3,7 +3,6 @@
 'use client';
 
 import React from 'react';
-import { LEDDisplay } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
 interface BitrateDisplayProps {
@@ -12,11 +11,21 @@ interface BitrateDisplayProps {
 
 export function BitrateDisplay({ className }: BitrateDisplayProps) {
   return (
-    <div className={cn('bitrate-display flex gap-2', className)}>
-      <LEDDisplay value="192" size="small" color="green" />
-      <span className="text-[#00ff00] text-xs">kbps</span>
-      <LEDDisplay value="44" size="small" color="green" />
-      <span className="text-[#00ff00] text-xs">kHz</span>
+    <div className={cn('bitrate-display flex items-center gap-1', className)}>
+      <span 
+        className="text-[9px] font-bold text-[#00ff00] font-mono"
+        style={{ textShadow: '0 0 4px #00ff00' }}
+      >
+        192
+      </span>
+      <span className="text-[7px] text-[#00aa00] font-mono">KBPS</span>
+      <span 
+        className="text-[9px] font-bold text-[#00ff00] font-mono ml-1"
+        style={{ textShadow: '0 0 4px #00ff00' }}
+      >
+        44
+      </span>
+      <span className="text-[7px] text-[#00aa00] font-mono">KHZ</span>
     </div>
   );
 }

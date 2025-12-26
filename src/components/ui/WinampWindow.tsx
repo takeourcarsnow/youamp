@@ -56,15 +56,23 @@ export function WinampWindow({
         zIndex: isDragging ? 1000 : 1,
       }}
     >
-      {/* Title Bar */}
+      {/* Title Bar - Classic Winamp gradient */}
       <div
-        className="winamp-titlebar flex items-center justify-between cursor-grab select-none"
+        className="winamp-titlebar cursor-grab select-none"
         onMouseDown={handleMouseDown}
       >
-        <div className="flex items-center gap-1 flex-1 min-w-0">
-          <span className="winamp-title truncate">{title}</span>
+        {/* Left side decorations */}
+        <div className="flex items-center gap-1">
+          {/* Classic Winamp menu button area */}
+          <div className="flex gap-px">
+            <div className="w-[3px] h-[9px] bg-gradient-to-b from-[#7a9a7a] to-[#2a4a2a]" />
+            <div className="w-[3px] h-[9px] bg-gradient-to-b from-[#7a9a7a] to-[#2a4a2a]" />
+          </div>
+          <span className="winamp-title ml-1">{title}</span>
         </div>
-        <div className="flex items-center gap-0.5">
+        
+        {/* Right side buttons */}
+        <div className="flex items-center gap-px">
           {extraButtons}
           {onMinimize && (
             <button
@@ -72,7 +80,7 @@ export function WinampWindow({
               className="winamp-button w-[9px] h-[9px]"
               title="Minimize"
             >
-              <span className="text-[8px] leading-none">_</span>
+              <span className="text-[6px] leading-none font-bold">_</span>
             </button>
           )}
           {showShade && onShade && (
@@ -81,7 +89,7 @@ export function WinampWindow({
               className="winamp-button w-[9px] h-[9px]"
               title={isShaded ? 'Unshade' : 'Shade'}
             >
-              <span className="text-[8px] leading-none">{isShaded ? '□' : '▬'}</span>
+              <span className="text-[6px] leading-none font-bold">{isShaded ? '▼' : '▲'}</span>
             </button>
           )}
           {onClose && (
@@ -90,7 +98,7 @@ export function WinampWindow({
               className="winamp-button winamp-close w-[9px] h-[9px]"
               title="Close"
             >
-              <span className="text-[8px] leading-none">×</span>
+              <span className="text-[6px] leading-none font-bold">×</span>
             </button>
           )}
         </div>

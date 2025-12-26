@@ -78,29 +78,40 @@ export function LyricsWindow() {
 
   return (
     <WinampWindow
-      title="Lyrics"
+      title="YOUAMP LYRICS"
       position={lyricsWindow.position}
       onPositionChange={(pos) => setWindowPosition('lyricsWindow', pos)}
       onClose={() => toggleWindow('lyricsWindow')}
       width={300}
     >
-      <div className="lyrics-content max-h-[400px] overflow-y-auto scrollbar-thin">
+      <div 
+        className="lyrics-content max-h-[400px] overflow-y-auto scrollbar-thin"
+        style={{
+          background: '#000',
+          border: '2px solid',
+          borderColor: '#0a0a0a #3a3a3a #3a3a3a #0a0a0a',
+          padding: '4px',
+        }}
+      >
         {!currentTrack ? (
-          <div className="text-center py-8 text-gray-500 text-sm">
-            No track playing
+          <div className="text-center py-8 text-[#006600] text-[10px] font-mono uppercase">
+            *** NO TRACK PLAYING ***
           </div>
         ) : isLoading ? (
-          <div className="text-center py-8 text-[#00ff00]/50 text-sm">
-            <div className="animate-pulse">Loading lyrics...</div>
+          <div className="text-center py-8 text-[#00ff00] text-[10px] font-mono uppercase">
+            <div className="animate-pulse">*** LOADING LYRICS ***</div>
           </div>
         ) : lyrics ? (
-          <div className="text-sm text-[#00ff00]/90 whitespace-pre-line leading-relaxed p-2">
+          <div 
+            className="text-[10px] text-[#00ff00] whitespace-pre-line leading-relaxed p-1 font-mono"
+            style={{ textShadow: '0 0 4px #00ff00' }}
+          >
             {lyrics}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-500 text-sm">
-            <p>Lyrics not found</p>
-            <p className="text-xs mt-2 text-gray-600">
+          <div className="text-center py-8 text-[#006600] text-[10px] font-mono uppercase">
+            <p>*** LYRICS NOT FOUND ***</p>
+            <p className="mt-2 text-[#00aa00]">
               {currentTrack.artist} - {currentTrack.title}
             </p>
           </div>

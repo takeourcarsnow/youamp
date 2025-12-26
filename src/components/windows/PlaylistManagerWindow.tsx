@@ -68,7 +68,7 @@ export function PlaylistManagerWindow() {
 
   return (
     <WinampWindow
-      title="Playlist Manager"
+      title="YOUAMP PLAYLIST MANAGER"
       position={playlistManagerWindow.position}
       onPositionChange={(pos) => setWindowPosition('playlistManagerWindow', pos)}
       onClose={() => toggleWindow('playlistManagerWindow')}
@@ -76,42 +76,57 @@ export function PlaylistManagerWindow() {
     >
       <div className="playlist-manager-content">
         {/* Create new playlist */}
-        <div className="flex gap-2 mb-3">
+        <div className="flex gap-1 mb-2">
           <input
             type="text"
             value={newPlaylistName}
             onChange={(e) => setNewPlaylistName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleCreatePlaylist()}
-            placeholder="New playlist name..."
-            className="flex-1 bg-black/50 text-[#00ff00] text-xs px-2 py-1 rounded border border-[#00ff00]/30 placeholder:text-[#00ff00]/50"
+            placeholder="NEW PLAYLIST NAME..."
+            className="flex-1 text-[9px] px-2 py-1 font-mono uppercase"
+            style={{
+              background: '#000',
+              color: '#00ff00',
+              border: '2px solid',
+              borderColor: '#0a0a0a #3a3a3a #3a3a3a #0a0a0a',
+            }}
           />
           <button
             onClick={handleCreatePlaylist}
             disabled={!newPlaylistName.trim()}
-            className="px-2 py-1 text-xs bg-[#00ff00]/10 hover:bg-[#00ff00]/20 text-[#00ff00] rounded disabled:opacity-50"
+            className="playlist-control-btn"
+            style={{ padding: '2px 6px' }}
           >
-            Create
+            +NEW
           </button>
         </div>
 
         {/* Playlists list */}
-        <div className="max-h-[250px] overflow-y-auto scrollbar-thin">
+        <div 
+          className="max-h-[250px] overflow-y-auto scrollbar-thin"
+          style={{
+            background: '#000',
+            border: '2px solid',
+            borderColor: '#0a0a0a #3a3a3a #3a3a3a #0a0a0a',
+          }}
+        >
           {playlists.length === 0 ? (
-            <div className="text-center py-4 text-gray-500 text-xs">
-              No saved playlists
+            <div className="text-center py-4 text-[#006600] text-[9px] font-mono uppercase">
+              *** NO SAVED PLAYLISTS ***
             </div>
           ) : (
-            playlists.map((playlist) => (
+            playlists.map((playlist, index) => (
               <div
                 key={playlist.id}
                 className={cn(
-                  'flex items-center gap-2 px-2 py-2 mb-1 rounded',
-                  'hover:bg-[#00ff00]/10 transition-colors group',
-                  activePlaylistId === playlist.id && 'bg-[#00ff00]/15'
+                  'flex items-center gap-1 px-1 py-1 group cursor-pointer',
+                  activePlaylistId === playlist.id ? 'bg-[#0000aa] text-white' : 'hover:bg-[#000066]'
                 )}
               >
-                {/* Icon */}
-                <span className="text-[#00ff00]">📁</span>
+                {/* Number */}
+                <span className="text-[9px] font-mono text-[#00ff00] w-4 text-right">
+                  {index + 1}.
+                </span>
 
                 {/* Name / Edit field */}
                 <div className="flex-1 min-w-0">
@@ -123,43 +138,42 @@ export function PlaylistManagerWindow() {
                       onBlur={handleFinishRename}
                       onKeyDown={(e) => e.key === 'Enter' && handleFinishRename()}
                       autoFocus
-                      className="w-full bg-black/50 text-[#00ff00] text-xs px-1 py-0.5 rounded border border-[#00ff00]/50"
+                      className="w-full bg-black text-[#00ff00] text-[9px] px-1 py-0.5 font-mono uppercase"
+                      style={{
+                        border: '1px solid #00ff00',
+                      }}
                     />
                   ) : (
                     <div 
-                      className="text-xs text-[#00ff00] truncate cursor-pointer"
+                      className="text-[9px] font-mono text-[#00ff00] truncate uppercase"
                       onDoubleClick={() => handleStartRename(playlist.id, playlist.name)}
+                      style={{ textShadow: '0 0 4px #00ff00' }}
                     >
                       {playlist.name}
                     </div>
                   )}
-                  <div className="text-[10px] text-gray-500">
-                    {playlist.tracks.length} tracks • {formatDuration(getTotalDuration(playlist.id))}
+                  <div className="text-[8px] font-mono text-[#00aa00]">
+                    {playlist.tracks.length} TRACKS • {formatDuration(getTotalDuration(playlist.id))}
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-px opacity-0 group-hover:opacity-100">
                   <button
                     onClick={() => handleLoadPlaylist(playlist.id)}
-                    className="p-1 text-[#00ff00] hover:bg-[#00ff00]/20 rounded text-xs"
+                    className="playlist-control-btn"
+                    style={{ padding: '1px 4px', fontSize: '8px' }}
                     title="Load playlist"
                   >
-                    ▶
-                  </button>
-                  <button
-                    onClick={() => handleStartRename(playlist.id, playlist.name)}
-                    className="p-1 text-[#00ff00] hover:bg-[#00ff00]/20 rounded text-xs"
-                    title="Rename"
-                  >
-                    ✏️
+                    LOAD
                   </button>
                   <button
                     onClick={() => handleDelete(playlist.id, playlist.name)}
-                    className="p-1 text-[#ff4444] hover:bg-[#ff4444]/20 rounded text-xs"
+                    className="playlist-control-btn"
+                    style={{ padding: '1px 4px', fontSize: '8px', color: '#ff4444' }}
                     title="Delete"
                   >
-                    🗑️
+                    DEL
                   </button>
                 </div>
               </div>

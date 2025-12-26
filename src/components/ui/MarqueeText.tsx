@@ -2,7 +2,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { useMarquee } from '@/hooks';
 import { cn } from '@/lib/utils';
 
@@ -11,6 +11,7 @@ interface MarqueeTextProps {
   maxLength?: number;
   speed?: number;
   className?: string;
+  style?: CSSProperties;
 }
 
 export function MarqueeText({
@@ -18,6 +19,7 @@ export function MarqueeText({
   maxLength = 30,
   speed = 150,
   className,
+  style,
 }: MarqueeTextProps) {
   const { displayText, handleMouseEnter, handleMouseLeave } = useMarquee({
     text,
@@ -29,6 +31,7 @@ export function MarqueeText({
   return (
     <div
       className={cn('font-mono overflow-hidden whitespace-nowrap', className)}
+      style={style}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       title={text}

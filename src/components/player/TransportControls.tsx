@@ -48,60 +48,79 @@ export function TransportControls({ className, compact = false }: TransportContr
     playNext();
   };
 
-  const buttonClass = compact 
-    ? 'transport-button w-6 h-5' 
-    : 'transport-button';
+  // Classic Winamp-style button icons
+  const PrevIcon = () => (
+    <svg viewBox="0 0 16 14" className="w-3 h-3 fill-current">
+      <path d="M0 0h3v14H0zM4 7l12-7v14z" />
+    </svg>
+  );
 
-  const iconClass = compact ? 'w-3 h-3 fill-current' : 'w-4 h-4 fill-current';
+  const PlayIcon = () => (
+    <svg viewBox="0 0 12 14" className="w-3 h-3 fill-current">
+      <path d="M0 0l12 7-12 7z" />
+    </svg>
+  );
+
+  const PauseIcon = () => (
+    <svg viewBox="0 0 12 14" className="w-3 h-3 fill-current">
+      <path d="M0 0h4v14H0zM8 0h4v14H8z" />
+    </svg>
+  );
+
+  const StopIcon = () => (
+    <svg viewBox="0 0 12 12" className="w-3 h-3 fill-current">
+      <rect width="12" height="12" />
+    </svg>
+  );
+
+  const NextIcon = () => (
+    <svg viewBox="0 0 16 14" className="w-3 h-3 fill-current">
+      <path d="M0 0l12 7-12 7zM13 0h3v14h-3z" />
+    </svg>
+  );
+
+  const EjectIcon = () => (
+    <svg viewBox="0 0 14 12" className="w-3 h-2.5 fill-current">
+      <path d="M7 0l7 7H0zM0 9h14v3H0z" />
+    </svg>
+  );
 
   // Compact mode: only prev, play/pause, next
   if (compact) {
     return (
-      <div className={cn('transport-controls flex items-center gap-0.5', className)}>
+      <div className={cn('transport-controls flex items-center gap-px', className)}>
         <button
           onClick={handlePrevious}
-          className={buttonClass}
+          className="transport-button"
           title="Previous"
           disabled={!currentTrack}
         >
-          <svg viewBox="0 0 24 24" className={iconClass}>
-            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-          </svg>
+          <PrevIcon />
         </button>
 
         <button
           onClick={isPlaying ? handlePause : handlePlay}
-          className={cn(buttonClass, isPlaying && 'active')}
+          className={cn('transport-button', isPlaying && 'active')}
           title={isPlaying ? 'Pause' : 'Play'}
           disabled={!currentTrack}
         >
-          {isPlaying ? (
-            <svg viewBox="0 0 24 24" className={iconClass}>
-              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" className={iconClass}>
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
         </button>
 
         <button
           onClick={handleNext}
-          className={buttonClass}
+          className="transport-button"
           title="Next"
           disabled={!currentTrack}
         >
-          <svg viewBox="0 0 24 24" className={iconClass}>
-            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-          </svg>
+          <NextIcon />
         </button>
       </div>
     );
   }
 
   return (
-    <div className={cn('transport-controls flex items-center gap-1', className)}>
+    <div className={cn('transport-controls flex items-center gap-px', className)}>
       {/* Previous */}
       <button
         onClick={handlePrevious}
@@ -109,9 +128,7 @@ export function TransportControls({ className, compact = false }: TransportContr
         title="Previous (Ctrl+←)"
         disabled={!currentTrack}
       >
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-          <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-        </svg>
+        <PrevIcon />
       </button>
 
       {/* Play */}
@@ -121,9 +138,7 @@ export function TransportControls({ className, compact = false }: TransportContr
         title="Play (Space)"
         disabled={!currentTrack}
       >
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-          <path d="M8 5v14l11-7z" />
-        </svg>
+        <PlayIcon />
       </button>
 
       {/* Pause */}
@@ -133,9 +148,7 @@ export function TransportControls({ className, compact = false }: TransportContr
         title="Pause (Space)"
         disabled={!currentTrack}
       >
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-        </svg>
+        <PauseIcon />
       </button>
 
       {/* Stop */}
@@ -145,9 +158,7 @@ export function TransportControls({ className, compact = false }: TransportContr
         title="Stop"
         disabled={!currentTrack}
       >
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-          <path d="M6 6h12v12H6z" />
-        </svg>
+        <StopIcon />
       </button>
 
       {/* Next */}
@@ -157,9 +168,7 @@ export function TransportControls({ className, compact = false }: TransportContr
         title="Next (Ctrl+→)"
         disabled={!currentTrack}
       >
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-          <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-        </svg>
+        <NextIcon />
       </button>
     </div>
   );
